@@ -1,0 +1,5012 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clearance Demo</title>
+    <style>
+      :root {
+        --bg: #f6f8fc;
+        --panel: #ffffff;
+        --panel-soft: #f6f8fc;
+        --line: #d2d7e2;
+        --line-strong: #c4ccd8;
+        --text: #171b24;
+        --muted: #3f4653;
+        --brand: #ff6224;
+        --brand-soft: #fff4ee;
+        --green: #169b62;
+        --green-bg: #e8faf1;
+        --amber: #b96b00;
+        --amber-bg: #fff7df;
+        --rose: #c53c58;
+        --rose-bg: #fff0f3;
+        --shadow: 0 2px 10px rgba(27, 32, 61, 0.035);
+        --submission-row-pad: 7px;
+        --submission-row-font: 11px;
+        --submission-meta-font: 10px;
+        --detail-title-font: 15px;
+        --detail-label-font: 11px;
+        --detail-value-font: 11px;
+        --detail-note-font: 11px;
+        --detail-pill-font: 11px;
+        --detail-field-pad-y: 7px;
+        --detail-field-pad-x: 10px;
+        --detail-textarea-pad-y: 8px;
+        --detail-textarea-pad-x: 10px;
+        --lower-top-row: 68%;
+        --col-submission: 2.1fr;
+        --col-broker: 1.45fr;
+        --col-company: 1.2fr;
+        --col-dti: 0.55fr;
+        --col-incept: 0.95fr;
+        --col-received: 1.25fr;
+        --col-subject: 1.9fr;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 13px;
+        color: var(--text);
+        background: var(--bg);
+        overflow: hidden;
+        -webkit-font-smoothing: subpixel-antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+      }
+
+      button,
+      select {
+        font: inherit;
+      }
+
+      .app {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      .tray {
+        width: 220px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        background: #f7f9fd;
+        border-right: 1px solid var(--line-strong);
+        transition:
+          width 220ms ease,
+          opacity 180ms ease,
+          border-color 180ms ease;
+        opacity: 1;
+        overflow: hidden;
+      }
+
+      .tray.closed {
+        width: 0;
+        opacity: 0;
+        border-right-color: transparent;
+      }
+
+      .tray-header {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line-strong);
+      }
+
+      .brand-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .brand {
+        font-size: 22px;
+        font-weight: 900;
+        letter-spacing: -0.06em;
+        text-transform: uppercase;
+        color: var(--brand);
+        flex-shrink: 0;
+      }
+
+      .brand-sub {
+        font-size: 11px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .icon-btn {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .tray-body {
+        flex: 1;
+        padding: 10px;
+      }
+
+      .tray-card,
+      .tray-stat {
+        background: #fff;
+        border: 1px solid var(--line-strong);
+        border-radius: 16px;
+      }
+
+      .tray-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        box-shadow: var(--shadow);
+      }
+
+      .tray-glyph {
+        width: 32px;
+        height: 32px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: var(--brand-soft);
+        color: var(--brand);
+        font-weight: 700;
+      }
+
+      .tray-stack {
+        display: grid;
+        gap: 10px;
+      }
+
+      .tray-stat {
+        padding: 10px;
+      }
+
+      .tray-stat-title {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #94a3b8;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .shell {
+        min-width: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .edge-toggle {
+        position: fixed;
+        top: 50vh;
+        left: 0;
+        transform: translate(-18%, -50%);
+        width: 30px;
+        height: 96px;
+        border-radius: 16px;
+        border: 1px solid var(--line-strong);
+        background: #fff;
+        color: var(--muted);
+        display: none;
+        place-items: center;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        z-index: 25;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .edge-toggle.visible {
+        display: grid;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 10px 18px;
+        background: #fff;
+        border-bottom: 1px solid var(--line-strong);
+      }
+
+      .title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .eyebrow {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: #94a3b8;
+      }
+
+      .title {
+        margin: 0;
+        font-size: 21px;
+        font-weight: 700;
+        line-height: 1;
+        color: var(--text);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .submission-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        justify-content: center;
+        position: static;
+        justify-self: center;
+      }
+
+      .action-btn {
+        padding: 7px 12px;
+        border-radius: 14px;
+        border: 1px solid var(--line-strong);
+        background: #fff;
+        color: #232933;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 500;
+        transition: font-size 120ms ease, font-weight 120ms ease, border-color 120ms ease;
+      }
+
+      .action-btn:hover {
+        font-size: 12px;
+        font-weight: 600;
+        border-color: #bdc8d9;
+      }
+
+      .action-btn.compact {
+        padding: 3px 10px;
+        font-size: 10px;
+        border-radius: 9px;
+      }
+
+      .action-btn.compact:hover {
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .icon-btn {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+        background: #fff;
+        color: #343b47;
+        cursor: pointer;
+        display: inline-grid;
+        place-items: center;
+        padding: 0;
+        position: relative;
+      }
+
+      .icon-btn svg {
+        width: 18px;
+        height: 18px;
+        display: block;
+      }
+
+      .icon-btn:hover {
+        background: #f5f8fd;
+      }
+
+      .icon-btn::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: #0f172a;
+        color: #fff;
+        font-size: 10px;
+        line-height: 1;
+        padding: 5px 7px;
+        border-radius: 6px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 120ms ease;
+      }
+
+      .icon-btn:hover::after,
+      .icon-btn:focus-visible::after {
+        opacity: 1;
+      }
+
+      .content {
+        display: flex;
+        gap: 6px;
+        padding: 6px;
+        min-height: 0;
+        flex: 1;
+        height: calc(100vh - 64px);
+      }
+
+      .left,
+      .right {
+        min-width: 0;
+        min-height: 0;
+        height: 100%;
+        border: 1px solid var(--line-strong);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+
+      .left {
+        flex: 0.95;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+      }
+
+      .left-scroll {
+        min-height: 0;
+        flex: 1;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .right {
+        flex: 1.05;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+      }
+
+      .section-bar {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 10px;
+        min-height: 46px;
+        background: #fff;
+        border-bottom: 1px solid var(--line-strong);
+        box-sizing: border-box;
+      }
+
+      .section-tools {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+      }
+
+      .zoom-tools {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+      }
+
+      .zoom-divider {
+        width: 10px;
+      }
+
+      .settings-btn {
+        width: auto;
+        height: auto;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: #454c59;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .settings-btn svg {
+        width: 15px;
+        height: 15px;
+        display: block;
+      }
+
+      .zoom-label {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
+        color: #4a515e;
+      }
+
+      .density-btn {
+        width: auto;
+        height: auto;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: #454c59;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1;
+        padding: 0;
+      }
+
+      .filter-btn {
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: #1f2430;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .filter-btn svg {
+        width: 16px;
+        height: 16px;
+        display: block;
+      }
+
+      .list-wrap {
+        padding: 6px 6px 0;
+        flex: 0 0 auto;
+      }
+
+      .submission-table {
+        border: 1px solid var(--line-strong);
+        border-radius: 16px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .submission-head,
+      .submission-row {
+        display: grid;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .submission-head {
+        padding: 0 10px;
+        min-height: 32px;
+        font-size: 10px;
+        font-weight: 700;
+        background: #fbfcff;
+        color: #232933;
+        border-bottom: 1px solid var(--line-strong);
+      }
+
+      .head-cell {
+        position: relative;
+        min-width: 0;
+        white-space: nowrap;
+        display: block;
+        height: 100%;
+        border-right: 1px solid var(--line-strong);
+      }
+
+      .head-cell:last-child {
+        border-right: 0;
+      }
+
+      .head-cell.is-hidden,
+      .row-cell.is-hidden {
+        display: none;
+      }
+
+      .sort-button {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        border: 0;
+        background: transparent;
+        padding: 0 6px;
+        text-align: left;
+        color: inherit;
+        cursor: pointer;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .head-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+      }
+
+      .head-label.stack {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        line-height: 1.05;
+      }
+
+      .head-label.stack.centered {
+        align-items: center;
+        width: 100%;
+        text-align: center;
+      }
+
+      .head-label.stack .subline {
+        font-size: 8px;
+        font-weight: 600;
+      }
+
+      .sort-icon {
+        width: 8px;
+        height: 12px;
+        position: relative;
+        flex-shrink: 0;
+        opacity: 0.7;
+        margin-left: auto;
+      }
+
+      .sort-icon::before,
+      .sort-icon::after {
+        content: "";
+        position: absolute;
+        left: 1px;
+        width: 6px;
+        height: 6px;
+        border-right: 1.5px solid #acb7c8;
+        border-bottom: 1.5px solid #acb7c8;
+        transform: rotate(225deg);
+      }
+
+      .sort-icon::before {
+        top: 0;
+      }
+
+      .sort-icon::after {
+        top: 5px;
+        transform: rotate(45deg);
+      }
+
+      .sort-icon.desc::before {
+        display: none;
+      }
+
+      .sort-icon.desc::after {
+        top: 3px;
+        border-color: #667388;
+      }
+
+      .sort-icon.asc::after {
+        display: none;
+      }
+
+      .sort-icon.asc::before {
+        top: 3px;
+        border-color: #667388;
+      }
+
+      .col-resizer {
+        position: absolute;
+        top: -8px;
+        right: -5px;
+        width: 10px;
+        height: calc(100% + 16px);
+        cursor: col-resize;
+        border: 0;
+        padding: 0;
+        background: transparent;
+      }
+
+      .col-resizer::after {
+        content: "";
+        position: absolute;
+        top: 20%;
+        bottom: 20%;
+        left: 4px;
+        width: 1px;
+        border-radius: 999px;
+        background: transparent;
+        transition: background 120ms ease;
+      }
+
+      .col-resizer:hover::after {
+        background: #cbd5e1;
+      }
+
+      .submission-list {
+        overflow: auto;
+      }
+
+      .submission-row {
+        width: 100%;
+        padding: var(--submission-row-pad) 10px;
+        border: 0;
+        border-bottom: 1px solid #e7edf5;
+        background: #fff;
+        text-align: left;
+        cursor: pointer;
+        font-size: var(--submission-row-font);
+      }
+
+      .row-cell {
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .row-cell.centered {
+        text-align: center;
+      }
+
+      .submission-row:hover {
+        background: #f5f8fd;
+      }
+
+      .submission-row.active {
+        background: var(--brand-soft);
+      }
+
+      .sub-main {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        min-width: 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .check {
+        width: 18px;
+        height: 18px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        color: transparent;
+        background: #fff;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .submission-row.active .check {
+        background: var(--brand);
+        border-color: var(--brand);
+        color: #fff;
+      }
+
+      .sub-title {
+        font-weight: 400;
+        color: var(--text);
+        font-size: var(--submission-row-font);
+        line-height: 1.2;
+        display: block;
+        width: 100%;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .sub-title.has-tooltip {
+        position: relative;
+      }
+
+      .sub-title.has-tooltip::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: 0;
+        bottom: calc(100% + 6px);
+        background: #0f172a;
+        color: #fff;
+        font-size: 10px;
+        line-height: 1.2;
+        padding: 6px 8px;
+        border-radius: 6px;
+        white-space: normal;
+        width: max-content;
+        max-width: 280px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 120ms ease;
+        z-index: 10;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.16);
+      }
+
+      .sub-main:hover .sub-title.has-tooltip::after,
+      .sub-title.has-tooltip:hover::after {
+        opacity: 1;
+      }
+
+      .sub-meta,
+      .cell-soft {
+        font-size: var(--submission-row-font);
+        color: #39414d;
+        display: block;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .resize-bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1px 0 0;
+        flex: 0 0 auto;
+      }
+
+      .resize-handle {
+        border: 0;
+        background: transparent;
+        color: #94a3b8;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        cursor: ns-resize;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .resize-line {
+        width: 24px;
+        height: 1px;
+        background: #cbd5e1;
+      }
+
+      .details {
+        min-height: 0;
+        flex: 0 0 auto;
+        overflow: visible;
+        padding: 0 3px 2px;
+        background: #fff;
+      }
+
+      .details-grid {
+        display: grid;
+        gap: 3px;
+        grid-template-columns: 1fr 1fr;
+        height: auto;
+        min-height: max-content;
+      }
+
+      .detail-column {
+        min-height: max-content;
+        display: grid;
+        grid-template-rows: auto 4px auto;
+        gap: 0;
+        align-content: start;
+      }
+
+      .detail-handle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: ns-resize;
+      }
+
+      .detail-handle button {
+        border: 0;
+        background: transparent;
+        color: #94a3b8;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: ns-resize;
+      }
+
+      .detail-handle .resize-line {
+        width: 18px;
+      }
+
+      .detail-card {
+        height: auto;
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid #e4eaf3;
+        border-radius: 14px;
+        padding: 7px;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .card-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 6px;
+      }
+
+      .card-title h3 {
+        margin: 0;
+        font-size: var(--detail-title-font);
+        font-weight: 700;
+        color: var(--text);
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+
+      .card-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .segmented {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        border-radius: 16px;
+        background: #d8e0ee;
+        padding: 3px;
+      }
+
+      .segmented button {
+        border: 0;
+        background: transparent;
+        color: #39414d;
+        font-size: 10px;
+        padding: 6px 16px;
+        border-radius: 13px;
+        cursor: pointer;
+      }
+
+      .segmented button.active {
+        background: #fff;
+        color: #171b24;
+        box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
+      }
+
+      .recommendation-label {
+        font-size: var(--detail-label-font);
+        font-weight: 500;
+        color: #555c69;
+      }
+
+      .pill {
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: var(--detail-pill-font);
+        font-weight: 600;
+      }
+
+      .pill.clear {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+
+      .pill.review {
+        background: var(--amber-bg);
+        color: var(--amber);
+      }
+
+      .pill.block {
+        background: var(--rose-bg);
+        color: var(--rose);
+      }
+
+      .field-grid {
+        display: grid;
+        gap: 7px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .insured-grid {
+        grid-template-columns: minmax(0, 1.45fr) minmax(150px, 0.55fr);
+      }
+
+      .field-span-wide {
+        grid-column: 1 / 2;
+      }
+
+      .field-label {
+        margin-bottom: 4px;
+        font-size: var(--detail-label-font);
+        font-weight: 500;
+        letter-spacing: 0;
+        text-transform: none;
+        color: #2a2f39;
+        line-height: 1.2;
+      }
+
+      .field-value {
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        padding: var(--detail-field-pad-y) var(--detail-field-pad-x);
+        font-size: var(--detail-value-font);
+        line-height: 1.3;
+        color: #1e2430;
+        background: #fff;
+      }
+
+      .field-value.selectish {
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .date-input-shell {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .date-input-shell .date-field-input {
+        width: 100%;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        outline: none;
+        color: inherit;
+        font: inherit;
+      }
+
+      .date-input-shell .date-field-input::placeholder {
+        color: #8a93a3;
+      }
+
+      .date-picker-btn {
+        width: 16px;
+        height: 16px;
+        border: 0;
+        background: transparent;
+        color: #7b8598;
+        padding: 0;
+        flex-shrink: 0;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .date-picker-btn svg {
+        width: 16px;
+        height: 16px;
+        display: block;
+      }
+
+      .native-date-input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .field-value.selectish.compact {
+        width: 70px;
+        padding: var(--detail-field-pad-y) 9px;
+      }
+
+      .state-picker-shell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .state-picker-input {
+        width: 100%;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        outline: none;
+        color: inherit;
+        font: inherit;
+      }
+
+      .state-picker-input::placeholder {
+        color: #8a93a3;
+      }
+
+      .field-caret {
+        width: 0;
+        height: 0;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 5px solid #8792aa;
+        flex-shrink: 0;
+      }
+
+      .textarea {
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        padding: var(--detail-textarea-pad-y) var(--detail-textarea-pad-x);
+        font-size: var(--detail-value-font);
+        line-height: 1.35;
+        color: #1e2430;
+        background: #fff;
+      }
+
+      .stack {
+        display: grid;
+        gap: 4px;
+      }
+
+      .note {
+        padding: 7px 8px;
+        border-radius: 9px;
+        background: #f7faff;
+        color: #2f3641;
+        font-size: var(--detail-note-font);
+        line-height: 1.35;
+      }
+
+      .broker-disabled {
+        background: #f1f5fb;
+        color: #80899a;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 5px 8px;
+        min-height: 46px;
+        background: #fff;
+        border-bottom: 1px solid var(--line-strong);
+        box-sizing: border-box;
+      }
+
+      .toolbar-left,
+      .toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+      }
+
+      .toolbar-left {
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .doc-tab {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 7px;
+        border-radius: 12px;
+        border: 0;
+        background: transparent;
+        color: #444b58;
+        cursor: pointer;
+        font-size: 10px;
+      }
+
+      .doc-tab.active {
+        background: var(--brand-soft);
+        color: #c24d1e;
+        box-shadow: inset 0 -2px 0 #ff6224;
+      }
+
+      .doc-glyph {
+        width: 16px;
+        height: 16px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      .doc-glyph svg {
+        width: 16px;
+        height: 16px;
+        display: block;
+      }
+
+      .preview-title {
+        font-size: 10px;
+        margin: 0;
+        font-weight: 700;
+        color: #212733;
+        white-space: nowrap;
+      }
+
+      .preview-area {
+        min-height: 0;
+        flex: 1;
+        overflow: auto;
+        padding: 6px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .download-btn {
+        width: auto;
+        height: auto;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: #4c5462;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        position: relative;
+      }
+
+      .download-btn svg {
+        width: 24px;
+        height: 24px;
+        display: block;
+      }
+
+      .viewer-shell {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .doc {
+        width: min(100%, 860px);
+        height: 100%;
+        max-height: 100%;
+        min-height: 0;
+        background: #fff;
+        border: 1px solid var(--line-strong);
+        border-radius: 16px;
+        box-shadow: 0 1px 3px rgba(27, 32, 61, 0.04);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .doc-inner {
+        padding: 10px;
+      }
+
+      .preview-page {
+        width: min(100%, 760px);
+        aspect-ratio: 0.77;
+        max-height: 100%;
+        background: #fff;
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .preview-image-wrap {
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .preview-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(27, 32, 61, 0.04);
+        border: 1px solid var(--line-strong);
+        background: #fff;
+      }
+
+      .preview-page-inner {
+        padding: 16px 18px;
+        height: 100%;
+      }
+
+      .doc-rule {
+        height: 1px;
+        background: #cfd7e3;
+      }
+
+      .doc-grid-2 {
+        display: grid;
+        grid-template-columns: 1.08fr 0.92fr;
+        gap: 10px;
+      }
+
+      .doc-box {
+        border: 1px solid var(--line-strong);
+        border-radius: 8px;
+        padding: 8px;
+      }
+
+      .doc-box.tight {
+        padding: 6px 8px;
+      }
+
+      .doc-lines {
+        display: grid;
+        gap: 5px;
+      }
+
+      .doc-line {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 9px;
+        line-height: 1.2;
+        color: #1f2733;
+      }
+
+      .doc-line span:first-child {
+        color: #444b58;
+      }
+
+      .doc-mini-title {
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #80889a;
+        margin-bottom: 6px;
+      }
+
+      .doc-tag-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+
+      .doc-tag {
+        border: 1px solid var(--line-strong);
+        border-radius: 8px;
+        padding: 6px 7px;
+        font-size: 9px;
+        line-height: 1.2;
+        display: flex;
+        justify-content: space-between;
+        gap: 6px;
+      }
+
+      .doc-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .doc-table th,
+      .doc-table td {
+        border: 1px solid var(--line-strong);
+        padding: 5px 6px;
+        font-size: 8.5px;
+        text-align: left;
+        line-height: 1.15;
+      }
+
+      .doc-table th {
+        background: #f8fafc;
+        color: #4b5563;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .mail-head {
+        flex-shrink: 0;
+        padding: 8px 10px;
+        border-bottom: 1px solid #dbe3ed;
+      }
+
+      .mail-subject {
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .mail-meta {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px 12px;
+        color: #444b58;
+        font-size: 10px;
+      }
+
+      .mail-meta-item {
+        min-width: 0;
+        line-height: 1.35;
+      }
+
+      .mail-meta-label {
+        color: #171b24;
+        font-weight: 700;
+      }
+
+      .mail-meta-label.stack {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        line-height: 1;
+        vertical-align: top;
+      }
+
+      .mail-meta-label.stack .subline {
+        font-size: 8px;
+        font-weight: 700;
+        margin-top: 2px;
+      }
+
+      @media (max-width: 1280px) {
+        .mail-meta {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      .mail-body {
+        min-height: 0;
+        overflow: auto;
+        padding: 8px 10px;
+        color: #1b212c;
+        line-height: 1.45;
+        font-size: 11px;
+      }
+
+      .mail-callout {
+        padding: 6px 0 0;
+        border-radius: 0;
+        background: transparent;
+        border: 0;
+        border-top: 1px solid #dbe3ed;
+        margin: 8px 0 0;
+      }
+
+      .embed {
+        margin-top: 8px;
+        padding: 6px 0 0;
+        border-radius: 0;
+        background: transparent;
+        border: 0;
+        border-top: 1px solid #f0cbb6;
+      }
+
+      .mini-kicker {
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #80899a;
+        margin-bottom: 6px;
+      }
+
+      .acord-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 12px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--line-strong);
+      }
+
+      .acord-logo {
+        font-size: 16px;
+        font-weight: 900;
+        letter-spacing: -0.06em;
+      }
+
+      .acord-sub {
+        font-size: 8px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: #4b5563;
+      }
+
+      .date-box {
+        padding: 5px 8px;
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        font-size: 9px;
+        text-align: right;
+        color: #39414d;
+      }
+
+      .acord-grid {
+        margin-top: 8px;
+        display: grid;
+        gap: 8px;
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+
+      .panel {
+        border: 1px solid #dbe3ed;
+        border-radius: 12px;
+        padding: 8px;
+      }
+
+      .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 4px 0;
+        font-size: 9px;
+        color: #171b24;
+      }
+
+      .row + .row {
+        border-top: 1px solid #e7edf5;
+      }
+
+      .row-label {
+        color: #444b58;
+      }
+
+      .chip-grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .chip {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 5px 7px;
+        border-radius: 8px;
+        border: 1px solid #dbe3ed;
+        font-size: 9px;
+      }
+
+      .note-dark {
+        margin-top: 14px;
+        padding: 8px;
+        border-radius: 12px;
+        background: #020617;
+        color: #cbd5e1;
+        line-height: 1.4;
+        font-size: 9px;
+      }
+
+      .sheet-table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 18px;
+      }
+
+      .sheet-table th,
+      .sheet-table td {
+        padding: 6px 7px;
+        border-bottom: 1px solid #dbe3ed;
+        text-align: left;
+        font-size: 9px;
+        white-space: nowrap;
+      }
+
+      .sheet-table th {
+        background: #f8fafc;
+        color: #4b5563;
+        font-size: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+      }
+
+      .sheet-table tr:nth-child(even) td {
+        background: #f8fafc;
+      }
+
+      .summary {
+        padding: 8px;
+        border-radius: 12px;
+        background: #f8fafc;
+        line-height: 1.4;
+        color: #1f2733;
+        font-size: 10px;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .column-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.22);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 40;
+        padding: 16px;
+      }
+
+      .column-modal.open {
+        display: flex;
+      }
+
+      .column-dialog {
+        width: min(100%, 320px);
+        max-height: 78vh;
+        background: #fff;
+        border: 1px solid var(--line-strong);
+        border-radius: 18px;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .column-dialog-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 18px 10px;
+      }
+
+      .column-dialog-title {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      .column-close {
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        border: 1px solid var(--line-strong);
+        background: #fff;
+        color: #171b24;
+        cursor: pointer;
+        font-size: 22px;
+        line-height: 1;
+      }
+
+      .column-table {
+        padding: 0 18px;
+        overflow: auto;
+      }
+
+      .column-table-head,
+      .column-row {
+        display: grid;
+        grid-template-columns: 1fr 120px;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .column-table-head {
+        padding: 4px 0 8px;
+        border-bottom: 1px solid #dfe7f0;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .column-row {
+        padding: 8px 0;
+        border-bottom: 1px solid #e7edf5;
+        transition: padding 120ms ease, background 120ms ease;
+      }
+
+      .column-name-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .drag-handle {
+        width: 16px;
+        height: 18px;
+        flex-shrink: 0;
+        color: #5d6677;
+        cursor: grab;
+        position: relative;
+      }
+
+      .drag-handle::before {
+        content: "";
+        position: absolute;
+        inset: 2px 3px;
+        background:
+          radial-gradient(circle, currentColor 1.6px, transparent 1.7px) 0 0 / 6px 6px;
+      }
+
+      .column-name {
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .visibility-toggle {
+        justify-self: end;
+        width: 28px;
+        height: 28px;
+        border: 0;
+        border-radius: 8px;
+        background: #ff5b1a;
+        color: #fff;
+        cursor: pointer;
+        display: inline-grid;
+        place-items: center;
+      }
+
+      .visibility-toggle.off {
+        background: #e2e8f0;
+        color: #94a3b8;
+      }
+
+      .visibility-toggle svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .column-dialog-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 18px 16px;
+      }
+
+      .foot-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .text-btn {
+        border: 0;
+        background: transparent;
+        color: #1f2430;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .primary-btn,
+      .secondary-btn {
+        border-radius: 14px;
+        padding: 10px 16px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .column-row.dragging {
+        opacity: 0.12;
+      }
+
+      .column-row.dragging .column-name-wrap,
+      .column-row.dragging .visibility-toggle {
+        opacity: 0;
+      }
+
+      .column-row.drop-target {
+        background: transparent;
+      }
+
+      .column-row.drop-before {
+        padding-top: 34px;
+        box-shadow: inset 0 1px 0 #ff6224;
+      }
+
+      .column-row.drop-after {
+        padding-bottom: 34px;
+        box-shadow: inset 0 -1px 0 #ff6224;
+      }
+
+      .secondary-btn {
+        border: 1px solid #cfd8e6;
+        background: #fff;
+        color: #1f2430;
+      }
+
+      .primary-btn {
+        border: 0;
+        background: #2b2d4a;
+        color: #fff;
+      }
+
+      @media (max-width: 1180px) {
+        .content {
+          flex-direction: column;
+        }
+
+        .details-grid,
+        .acord-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .submission-head,
+        .submission-row {
+          grid-template-columns: 2fr 1.3fr 0.6fr 0.9fr 1.1fr 1.5fr;
+        }
+      }
+
+      @media (max-width: 820px) {
+        .tray {
+          display: none;
+        }
+
+        .topbar,
+        .preview-bar,
+        .section-bar {
+          padding-left: 14px;
+          padding-right: 14px;
+        }
+
+        .content {
+          padding: 12px;
+          gap: 12px;
+        }
+
+        .submission-head,
+        .submission-row {
+          min-width: 920px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="tray" id="tray">
+        <div class="tray-header">
+          <div class="brand-wrap">
+            <div class="brand">Ping</div>
+            <div class="brand-sub" id="traySub">Ping Ops</div>
+          </div>
+        </div>
+        <div class="tray-body" id="trayBody">
+          <div class="tray-stack">
+            <div class="tray-card">
+              <div class="tray-glyph">⌂</div>
+              <div>
+                <div style="font-weight:700;">Submission Portal</div>
+                <div style="font-size:12px;color:#64748b;">Pinned workspace</div>
+              </div>
+            </div>
+            <div class="tray-stat">
+              <div class="tray-stat-title">Queue</div>
+              <div style="font-weight:700;">4 active submissions</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px;">1 blocked, 2 review, 1 clear</div>
+            </div>
+            <div class="tray-stat">
+              <div class="tray-stat-title">Targets</div>
+              <div style="font-weight:700;">2 same-day requests</div>
+              <div style="font-size:12px;color:#64748b;margin-top:4px;">Prioritize before noon</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <button class="edge-toggle" id="edgeToggle" aria-label="Toggle tray">›</button>
+      <datalist id="stateOptions">
+        <option value="AL">Alabama</option>
+        <option value="AK">Alaska</option>
+        <option value="AZ">Arizona</option>
+        <option value="AR">Arkansas</option>
+        <option value="CA">California</option>
+        <option value="CO">Colorado</option>
+        <option value="CT">Connecticut</option>
+        <option value="DE">Delaware</option>
+        <option value="FL">Florida</option>
+        <option value="GA">Georgia</option>
+        <option value="HI">Hawaii</option>
+        <option value="ID">Idaho</option>
+        <option value="IL">Illinois</option>
+        <option value="IN">Indiana</option>
+        <option value="IA">Iowa</option>
+        <option value="KS">Kansas</option>
+        <option value="KY">Kentucky</option>
+        <option value="LA">Louisiana</option>
+        <option value="ME">Maine</option>
+        <option value="MD">Maryland</option>
+        <option value="MA">Massachusetts</option>
+        <option value="MI">Michigan</option>
+        <option value="MN">Minnesota</option>
+        <option value="MS">Mississippi</option>
+        <option value="MO">Missouri</option>
+        <option value="MT">Montana</option>
+        <option value="NE">Nebraska</option>
+        <option value="NV">Nevada</option>
+        <option value="NH">New Hampshire</option>
+        <option value="NJ">New Jersey</option>
+        <option value="NM">New Mexico</option>
+        <option value="NY">New York</option>
+        <option value="NC">North Carolina</option>
+        <option value="ND">North Dakota</option>
+        <option value="OH">Ohio</option>
+        <option value="OK">Oklahoma</option>
+        <option value="OR">Oregon</option>
+        <option value="PA">Pennsylvania</option>
+        <option value="RI">Rhode Island</option>
+        <option value="SC">South Carolina</option>
+        <option value="SD">South Dakota</option>
+        <option value="TN">Tennessee</option>
+        <option value="TX">Texas</option>
+        <option value="UT">Utah</option>
+        <option value="VT">Vermont</option>
+        <option value="VA">Virginia</option>
+        <option value="WA">Washington</option>
+        <option value="WV">West Virginia</option>
+        <option value="WI">Wisconsin</option>
+        <option value="WY">Wyoming</option>
+      </datalist>
+
+      <div class="shell">
+        <header class="topbar">
+          <div class="title-wrap">
+            <div class="brand hidden" id="headerBrand">Ping</div>
+            <div>
+              <h1 class="title">Clearance</h1>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="action-btn compact">Help</button>
+          </div>
+        </header>
+
+        <main class="content">
+          <section class="left">
+            <div class="section-bar">
+              <div class="section-tools">
+                <button class="filter-btn" aria-label="Filter submissions">
+                  <svg viewBox="0 0 20 20" aria-hidden="true">
+                    <path fill="currentColor" d="M2.5 5.5h15v2h-15v-2Zm3 4h9v2h-9v-2Zm3 4h3v2h-3v-2Z"/>
+                  </svg>
+                  <span>Filter</span>
+                </button>
+              </div>
+              <div class="submission-actions">
+                <button class="action-btn compact">Clear</button>
+                <button class="action-btn compact">Reply</button>
+                <button class="action-btn compact">Block</button>
+                <button class="action-btn compact">Decline</button>
+                <button class="action-btn compact">Delete</button>
+              </div>
+              <div class="zoom-tools">
+                <span class="zoom-label">Zoom</span>
+                <button class="density-btn" id="densityDown" title="Decrease font size" aria-label="Decrease font size">-</button>
+                <button class="density-btn" id="densityUp" title="Increase font size" aria-label="Increase font size">+</button>
+                <span class="zoom-divider" aria-hidden="true"></span>
+                <button class="settings-btn" id="columnSettingsBtn" title="Configure Columns" aria-label="Configure Columns">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="currentColor" d="M19.14 12.94a7.96 7.96 0 0 0 .05-.94 7.96 7.96 0 0 0-.05-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.18 7.18 0 0 0-1.63-.94l-.36-2.54a.49.49 0 0 0-.49-.42h-3.84a.49.49 0 0 0-.49.42l-.36 2.54c-.58.22-1.12.53-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.84a.5.5 0 0 0 .12.64l2.03 1.58c-.03.31-.05.63-.05.94s.02.63.05.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.41 1.05.73 1.63.94l.36 2.54a.49.49 0 0 0 .49.42h3.84a.49.49 0 0 0 .49-.42l.36-2.54c.58-.22 1.12-.53 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7Z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="left-scroll">
+              <div class="list-wrap">
+                <div class="submission-table">
+                  <div class="submission-head" id="submissionHead"></div>
+                  <div class="submission-list" id="submissionList"></div>
+                </div>
+              </div>
+
+              <div class="resize-bar">
+                <button class="resize-handle" id="resizeHandle" aria-label="Resize submission list">
+                  <span class="resize-line"></span>
+                  <span>•••</span>
+                  <span class="resize-line"></span>
+                </button>
+              </div>
+
+              <div class="details">
+                <div class="details-grid">
+                  <div class="detail-column">
+                    <div class="card detail-card">
+                      <div class="card-title">
+                        <h3>Insured</h3>
+                        <div class="card-meta">
+                          <div class="segmented" id="insuredModeToggle">
+                            <button type="button" class="active" data-mode="new">New</button>
+                            <button type="button" data-mode="renewal">Renewal</button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="field-grid" id="insuredFields"></div>
+                      <div style="margin-top:8px;">
+                        <div class="field-label">Description of Operations</div>
+                        <div class="textarea" id="insuredDescription"></div>
+                      </div>
+                    </div>
+                    <div class="detail-handle">
+                      <button id="detailResizeHandle" aria-label="Resize lower cards">
+                        <span class="resize-line"></span>
+                        <span>•••</span>
+                        <span class="resize-line"></span>
+                      </button>
+                    </div>
+                    <div class="card detail-card">
+                      <div class="card-title">
+                        <h3>Notes</h3>
+                      </div>
+                      <div class="stack" id="notesList"></div>
+                    </div>
+                  </div>
+
+                  <div class="detail-column">
+                    <div class="card detail-card">
+                      <div class="card-title">
+                        <h3>Submission</h3>
+                        <div class="card-meta">
+                          <span class="recommendation-label">Recommendation</span>
+                          <span class="pill" id="triageStatus"></span>
+                        </div>
+                      </div>
+                      <div class="field-grid" id="submissionFields"></div>
+                      <div style="margin-top:8px;" class="summary" id="recommendation"></div>
+                    </div>
+                    <div></div>
+                    <div class="card detail-card">
+                      <div class="card-title">
+                        <h3>Wholesale Broker</h3>
+                      </div>
+                      <div class="field-grid" id="brokerFields"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="right">
+            <div class="toolbar">
+              <div class="toolbar-left" id="docTabs"></div>
+              <div class="toolbar-right">
+                <div class="preview-title" id="previewTitle"></div>
+                <select id="docSelect" style="padding:5px 8px;border-radius:10px;border:1px solid #dbe3ee;font-size:11px;"></select>
+                <button class="download-btn" title="Download" data-tooltip="Download" aria-label="Download">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v11m0 0-4.5-4.5M12 15.5l4.5-4.5M5 20h14"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="preview-area" id="previewArea"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div class="column-modal" id="columnModal" aria-hidden="true">
+      <div class="column-dialog" role="dialog" aria-modal="true" aria-labelledby="columnDialogTitle">
+        <div class="column-dialog-head">
+          <h2 class="column-dialog-title" id="columnDialogTitle">Configure Columns</h2>
+          <button class="column-close" id="columnModalClose" aria-label="Close column picker">×</button>
+        </div>
+        <div class="column-table">
+          <div class="column-table-head">
+            <div>Column Name</div>
+            <div style="text-align:right;">Visibility</div>
+          </div>
+          <div id="columnPickerList"></div>
+        </div>
+        <div class="column-dialog-foot">
+          <button class="secondary-btn" id="columnResetBtn">Reset Defaults</button>
+          <div class="foot-actions">
+            <button class="text-btn" id="columnCancelBtn">Cancel</button>
+            <button class="primary-btn" id="columnSaveBtn">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const submissions = [
+        {
+          id: "sub-101",
+          insured: "Blue Ocean Services",
+          broker: "Jared Pollack",
+          company: "Amwins",
+          dti: "121",
+          inceptDate: "Jul 24, 2026",
+          dateReceived: "Mar 25, 2026 10:42 PM",
+          subject: "Blue Ocean Services renewal submission with marine supplement",
+          sender: "Jared Pollack",
+          senderEmail: "jpollack@amwins-demo.com",
+          line: "Marine / General Liability",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$48,900,000",
+          priority: "Broker follow-up requested",
+          notes: [
+            "Loss runs were attached but the vessel schedule is incomplete.",
+            "Broker noted a recent expansion into a second operating region."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Loss Runs",
+            misc2: "Supplement"
+          },
+          insuredDetails: {
+            address1: "100 Harbor Point",
+            address2: "Suite 450",
+            city: "Charleston",
+            state: "SC",
+            zip: "29401",
+            fein: "84-1092388",
+            naics: "483113",
+            ofac: "Clear",
+            homeState: "South Carolina",
+            description: "Marine logistics and warehousing with regional brokerage operations."
+          },
+          submissionDetails: {
+            incept: "07/24/2026",
+            expiry: "07/24/2027",
+            needBy: "04/02/2026",
+            clientReference: "BOS-77421",
+            dateReceived: "03/25/2026 10:42 PM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Jared Pollack",
+            blockingSubId: "121-77421",
+            recommendation: "Needs vessel schedule review before clearance."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Jared Pollack",
+            assistant: "Meghan Howe",
+            emailSender: "jpollack@amwins-demo.com",
+            requestedUw: "Heather Allen"
+          },
+          email: {
+            from: "Jared Pollack <jpollack@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Meghan Howe <mhowe@amwins-demo.com>",
+            subject: "Blue Ocean Services renewal submission with marine supplement",
+            received: "Tuesday, March 25, 2026 at 10:42 PM",
+            bodyIntro: [
+              "Hi team,",
+              "Please find the renewal submission for Blue Ocean Services attached. The ACORD is included in the original email body below for quick review, and I have also attached the latest SOV and current loss runs.",
+              "We are targeting an indication by next Wednesday if possible. Let me know if you need any additional vessel detail or updated financials."
+            ],
+            bullets: [
+              "ACORD application embedded below",
+              "SOV workbook attached",
+              "Five-year loss runs attached"
+            ]
+          }
+        },
+        {
+          id: "sub-102",
+          insured: "YAD 838 Greens LP dba Collingwood Garden Apartments",
+          broker: "Mary Young",
+          company: "Insgroup",
+          dti: "128",
+          inceptDate: "May 30, 2023",
+          dateReceived: "Feb 8, 2023 09:15 AM",
+          subject: "Collingwood Garden Apartments ACORD and certified SOV",
+          sender: "Mary Young",
+          senderEmail: "myoung@insgroup.com",
+          line: "Commercial Property",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$17,027,976",
+          priority: "Ready for market",
+          notes: [
+            "ACORD 125 and ACORD 140 property section were included in the packet.",
+            "Premises listed at 838 Greens Road, Houston, Texas 77060 with apartment occupancy."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Property Section",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "8323 Southwest Freeway",
+            address2: "Suite 330",
+            city: "Houston",
+            state: "TX",
+            zip: "77074",
+            fein: "N/A",
+            naics: "531110",
+            ofac: "Clear",
+            homeState: "Texas",
+            description: "Owner of apartment complex. ACORD packet shows apartment occupancy with a scheduled property section attached."
+          },
+          submissionDetails: {
+            incept: "05/30/2023",
+            expiry: "05/30/2024",
+            needBy: "02/10/2023",
+            clientReference: "CREAPRO-01",
+            dateReceived: "02/08/2023 09:15 AM",
+            blockingCompany: "Insgroup",
+            blockingBroker: "Mary Young",
+            blockingSubId: "18671-CREAPRO-01",
+            recommendation: "Clear for quoting. Sample packet includes ACORD 125 applicant information and ACORD 140 property section."
+          },
+          brokerDetails: {
+            brokerCompany: "Insgroup",
+            broker: "Mary Young",
+            assistant: "Maria Garcia",
+            emailSender: "myoung@insgroup.com",
+            requestedUw: "N/A"
+          },
+          email: {
+            from: "Mary Young <myoung@insgroup.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Maria Garcia <maria@cpmcompany.com>",
+            subject: "Collingwood Garden Apartments ACORD and certified SOV",
+            received: "Wednesday, February 8, 2023 at 9:15 AM",
+            bodyIntro: [
+              "Good morning,",
+              "Attached is the Collingwood Garden Apartments submission package. The packet includes ACORD 125 applicant information, the ACORD 140 property section, and a certified SOV for review.",
+              "The named insured is YAD 838 Greens LP dba Collingwood Garden Apartments. Proposed effective date is 05/30/2023 with expiration 05/30/2024."
+            ],
+            bullets: [
+              "ACORD 125 applicant information attached",
+              "ACORD 140 property section attached",
+              "Certified SOV attached"
+            ]
+          }
+        },
+        {
+          id: "sub-103",
+          insured: "Sunset Valley Resort",
+          broker: "Lisa Tran",
+          company: "Amwins",
+          dti: "14",
+          inceptDate: "Apr 8, 2026",
+          dateReceived: "Mar 24, 2026 03:22 PM",
+          subject: "Sunset Valley Resort renewal with updated wildfire mitigation details",
+          sender: "Lisa Tran",
+          senderEmail: "ltran@amwins-demo.com",
+          line: "Hospitality / Property",
+          status: "Block",
+          triage: "Blocked",
+          tiv: "$88,410,000",
+          priority: "Conflict with incumbent market",
+          notes: [
+            "Existing blocked relationship noted with prior submission in the same tower.",
+            "Do not advance without manager override."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Wildfire Plan",
+            misc2: "Valuation"
+          },
+          insuredDetails: {
+            address1: "47 Canyon Crest Road",
+            address2: "",
+            city: "Bozeman",
+            state: "MT",
+            zip: "59715",
+            fein: "11-9827715",
+            naics: "721110",
+            ofac: "Clear",
+            homeState: "Montana",
+            description: "Destination resort with lodge, cabins, food service, and event operations."
+          },
+          submissionDetails: {
+            incept: "04/08/2026",
+            expiry: "04/08/2027",
+            needBy: "03/27/2026",
+            clientReference: "SVR-20814",
+            dateReceived: "03/24/2026 03:22 PM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Lisa Tran",
+            blockingSubId: "014-20814",
+            recommendation: "Blocked pending conflict resolution."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Lisa Tran",
+            assistant: "Noah Kim",
+            emailSender: "ltran@amwins-demo.com",
+            requestedUw: "Sandra DeWitt"
+          },
+          email: {
+            from: "Lisa Tran <ltran@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Noah Kim <nkim@amwins-demo.com>",
+            subject: "Sunset Valley Resort renewal with updated wildfire mitigation details",
+            received: "Monday, March 24, 2026 at 3:22 PM",
+            bodyIntro: [
+              "Hello,",
+              "Sending over the Sunset Valley Resort renewal. The insured completed a new wildfire mitigation plan and updated valuations, which are attached. I included the ACORD pages in-line below because the client wants quick confirmation the changes are reflected.",
+              "Please advise if there are any conflicts before we approach markets."
+            ],
+            bullets: [
+              "ACORD included in email thread",
+              "Wildfire mitigation plan attached",
+              "Updated valuation attached"
+            ]
+          }
+        },
+        {
+          id: "sub-104",
+          insured: "Ocean Breeze Cafe",
+          broker: "Nina Patel",
+          company: "CRC",
+          dti: "262",
+          inceptDate: "Dec 12, 2026",
+          dateReceived: "Mar 23, 2026 11:58 AM",
+          subject: "Ocean Breeze Cafe package renewal with liquor and entertainment supplement",
+          sender: "Nina Patel",
+          senderEmail: "npatel@crc-demo.com",
+          line: "Restaurant / Package",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$6,280,000",
+          priority: "Review live music exposure",
+          notes: [
+            "Supplement mentions weekend live performances and off-site catering.",
+            "Liquor receipts increased materially year over year."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Liquor Supp",
+            misc2: "Entertainment Supp"
+          },
+          insuredDetails: {
+            address1: "18 Seaside Walk",
+            address2: "",
+            city: "Savannah",
+            state: "GA",
+            zip: "31401",
+            fein: "62-4410091",
+            naics: "722511",
+            ofac: "Clear",
+            homeState: "Georgia",
+            description: "Coastal restaurant and bar with seasonal live entertainment and catering operations."
+          },
+          submissionDetails: {
+            incept: "12/12/2026",
+            expiry: "12/12/2027",
+            needBy: "03/31/2026",
+            clientReference: "OBC-54177",
+            dateReceived: "03/23/2026 11:58 AM",
+            blockingCompany: "CRC",
+            blockingBroker: "Nina Patel",
+            blockingSubId: "262-54177",
+            recommendation: "Review liquor and entertainment exposure before clearing."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Nina Patel",
+            assistant: "Ethan Ross",
+            emailSender: "npatel@crc-demo.com",
+            requestedUw: "Molly Chen"
+          },
+          email: {
+            from: "Nina Patel <npatel@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Ethan Ross <eross@crc-demo.com>",
+            subject: "Ocean Breeze Cafe package renewal with liquor and entertainment supplement",
+            received: "Sunday, March 23, 2026 at 11:58 AM",
+            bodyIntro: [
+              "Hi all,",
+              "Attached is the Ocean Breeze Cafe renewal package. The ACORD is included in the message body so the account summary is visible immediately, and I attached the liquor and entertainment supplements for the weekend event exposure.",
+              "We expect follow-up questions around payroll split and security, so I am happy to help with additional detail if needed."
+            ],
+            bullets: [
+              "ACORD pages shown below",
+              "Liquor supplement attached",
+              "Entertainment supplement attached"
+            ]
+          }
+        },
+        {
+          id: "sub-105",
+          insured: "Cedar Point Logistics",
+          broker: "Evan Moore",
+          company: "CRC",
+          dti: "311",
+          inceptDate: "Jun 15, 2026",
+          dateReceived: "Mar 22, 2026 08:41 AM",
+          subject: "Cedar Point Logistics package submission with updated fleet schedule",
+          sender: "Evan Moore",
+          senderEmail: "emoore@crc-demo.com",
+          line: "Transportation / Property",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$26,480,000",
+          priority: "Review updated schedule",
+          notes: [
+            "Fleet count increased from 42 to 57 units.",
+            "Property values were updated in the certified SOV."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Fleet Schedule",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "4550 Market Loop",
+            address2: "",
+            city: "Nashville",
+            state: "TN",
+            zip: "37211",
+            fein: "61-4482901",
+            naics: "484110",
+            ofac: "Clear",
+            homeState: "Tennessee",
+            description: "Regional trucking and warehousing account with owned terminals."
+          },
+          submissionDetails: {
+            incept: "06/15/2026",
+            expiry: "06/15/2027",
+            needBy: "03/29/2026",
+            clientReference: "CPL-90412",
+            dateReceived: "03/22/2026 08:41 AM",
+            blockingCompany: "CRC",
+            blockingBroker: "Evan Moore",
+            blockingSubId: "311-CPL-90412",
+            recommendation: "Review account growth and updated transportation schedule."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Evan Moore",
+            assistant: "Dana Holt",
+            emailSender: "emoore@crc-demo.com",
+            requestedUw: "Tara Benson"
+          },
+          email: {
+            from: "Evan Moore <emoore@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Dana Holt <dholt@crc-demo.com>",
+            subject: "Cedar Point Logistics package submission with updated fleet schedule",
+            received: "Sunday, March 22, 2026 at 8:41 AM",
+            bodyIntro: [
+              "Good morning,",
+              "Please review the Cedar Point Logistics submission. The insured added equipment and updated the fleet schedule, which are attached for review.",
+              "Let me know if you need separate support for the terminal values or transportation lines."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Fleet schedule attached",
+              "Loss summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-106",
+          insured: "Harborview Clinics",
+          broker: "Grace Lin",
+          company: "Amwins",
+          dti: "87",
+          inceptDate: "Jul 1, 2026",
+          dateReceived: "Mar 21, 2026 04:19 PM",
+          subject: "Harborview Clinics renewal with new location supplement",
+          sender: "Grace Lin",
+          senderEmail: "glin@amwins-demo.com",
+          line: "Healthcare Property",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$33,205,000",
+          priority: "Ready for market",
+          notes: [
+            "One new leased location added in Tampa.",
+            "Broker included a clean five-year loss summary."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Location Supplement",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "220 Harbor Medical Way",
+            address2: "",
+            city: "Jacksonville",
+            state: "FL",
+            zip: "32207",
+            fein: "59-8812044",
+            naics: "621111",
+            ofac: "Clear",
+            homeState: "Florida",
+            description: "Multi-location outpatient clinic group with owned and leased sites."
+          },
+          submissionDetails: {
+            incept: "07/01/2026",
+            expiry: "07/01/2027",
+            needBy: "03/30/2026",
+            clientReference: "HVC-11872",
+            dateReceived: "03/21/2026 04:19 PM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Grace Lin",
+            blockingSubId: "087-HVC-11872",
+            recommendation: "Clear for quoting with new location supplement attached."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Grace Lin",
+            assistant: "Colin Marks",
+            emailSender: "glin@amwins-demo.com",
+            requestedUw: "Pat Rossi"
+          },
+          email: {
+            from: "Grace Lin <glin@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Colin Marks <cmarks@amwins-demo.com>",
+            subject: "Harborview Clinics renewal with new location supplement",
+            received: "Saturday, March 21, 2026 at 4:19 PM",
+            bodyIntro: [
+              "Hi team,",
+              "Sending the Harborview Clinics renewal package. The only major change is the added Tampa site, and I attached the location supplement for quick review.",
+              "Everything else should track closely to the expiring structure."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Location supplement attached",
+              "Loss summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-107",
+          insured: "Red Canyon Hospitality Group",
+          broker: "Tyler West",
+          company: "CRC",
+          dti: "402",
+          inceptDate: "Sep 1, 2026",
+          dateReceived: "Mar 20, 2026 10:06 AM",
+          subject: "Red Canyon Hospitality package with catastrophe modeling report",
+          sender: "Tyler West",
+          senderEmail: "twest@crc-demo.com",
+          line: "Hospitality / CAT",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$142,800,000",
+          priority: "Modeling review needed",
+          notes: [
+            "Cat model report attached for the coastal locations.",
+            "Broker flagged storm deductible questions."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "CAT Report",
+            misc2: "Deductible Summary"
+          },
+          insuredDetails: {
+            address1: "811 Desert Rim Blvd",
+            address2: "Floor 5",
+            city: "Phoenix",
+            state: "AZ",
+            zip: "85004",
+            fein: "82-9916450",
+            naics: "721110",
+            ofac: "Clear",
+            homeState: "Arizona",
+            description: "Hospitality group with resort and boutique hotel locations in CAT-exposed regions."
+          },
+          submissionDetails: {
+            incept: "09/01/2026",
+            expiry: "09/01/2027",
+            needBy: "04/02/2026",
+            clientReference: "RCH-33019",
+            dateReceived: "03/20/2026 10:06 AM",
+            blockingCompany: "CRC",
+            blockingBroker: "Tyler West",
+            blockingSubId: "402-RCH-33019",
+            recommendation: "Review catastrophe modeling before advancing."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Tyler West",
+            assistant: "Jill Powers",
+            emailSender: "twest@crc-demo.com",
+            requestedUw: "Morgan Tate"
+          },
+          email: {
+            from: "Tyler West <twest@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Jill Powers <jpowers@crc-demo.com>",
+            subject: "Red Canyon Hospitality package with catastrophe modeling report",
+            received: "Friday, March 20, 2026 at 10:06 AM",
+            bodyIntro: [
+              "Good morning,",
+              "Forwarding the Red Canyon Hospitality package. I included the cat modeling report because the insured has several wind-exposed locations.",
+              "Please review deductible treatment before we clear it forward."
+            ],
+            bullets: [
+              "ACORD attached",
+              "CAT report attached",
+              "Deductible summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-108",
+          insured: "Northfield Cold Storage",
+          broker: "Hannah Cole",
+          company: "Amwins",
+          dti: "55",
+          inceptDate: "Aug 12, 2026",
+          dateReceived: "Mar 19, 2026 01:32 PM",
+          subject: "Northfield Cold Storage renewal with equipment breakdown details",
+          sender: "Hannah Cole",
+          senderEmail: "hcole@amwins-demo.com",
+          line: "Industrial Property",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$64,920,000",
+          priority: "Equipment breakdown included",
+          notes: [
+            "Boiler and machinery values broken out in support file.",
+            "No adverse loss activity reported."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Equipment Breakdown",
+            misc2: "Valuation"
+          },
+          insuredDetails: {
+            address1: "300 Icehouse Road",
+            address2: "",
+            city: "Des Moines",
+            state: "IA",
+            zip: "50309",
+            fein: "41-6712098",
+            naics: "493120",
+            ofac: "Clear",
+            homeState: "Iowa",
+            description: "Cold storage and refrigerated warehousing operation with owned facilities."
+          },
+          submissionDetails: {
+            incept: "08/12/2026",
+            expiry: "08/12/2027",
+            needBy: "03/31/2026",
+            clientReference: "NCS-61108",
+            dateReceived: "03/19/2026 01:32 PM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Hannah Cole",
+            blockingSubId: "055-NCS-61108",
+            recommendation: "Clear for quoting with equipment breakdown support included."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Hannah Cole",
+            assistant: "Peter Snow",
+            emailSender: "hcole@amwins-demo.com",
+            requestedUw: "Nina Bell"
+          },
+          email: {
+            from: "Hannah Cole <hcole@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Peter Snow <psnow@amwins-demo.com>",
+            subject: "Northfield Cold Storage renewal with equipment breakdown details",
+            received: "Thursday, March 19, 2026 at 1:32 PM",
+            bodyIntro: [
+              "Hello,",
+              "Attached is the Northfield Cold Storage renewal. I broke out the refrigeration equipment values separately for easier review.",
+              "Please let me know if you need the engineering write-up as well."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Equipment breakdown details attached",
+              "Valuation attached"
+            ]
+          }
+        },
+        {
+          id: "sub-109",
+          insured: "Silver Pine Manufacturing",
+          broker: "Owen Hart",
+          company: "CRC",
+          dti: "219",
+          inceptDate: "Oct 5, 2026",
+          dateReceived: "Mar 18, 2026 09:24 AM",
+          subject: "Silver Pine Manufacturing submission with updated sprinkler credits",
+          sender: "Owen Hart",
+          senderEmail: "ohart@crc-demo.com",
+          line: "Manufacturing Property",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$74,110,500",
+          priority: "Verify protection updates",
+          notes: [
+            "Sprinkler upgrade letter attached.",
+            "Awaiting confirmation on one tenant-occupied building."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Sprinkler Letter",
+            misc2: "Protection Summary"
+          },
+          insuredDetails: {
+            address1: "1900 Foundry Park",
+            address2: "",
+            city: "Birmingham",
+            state: "AL",
+            zip: "35203",
+            fein: "63-9945127",
+            naics: "332710",
+            ofac: "Clear",
+            homeState: "Alabama",
+            description: "Light industrial manufacturing account with mixed sprinkler protection."
+          },
+          submissionDetails: {
+            incept: "10/05/2026",
+            expiry: "10/05/2027",
+            needBy: "04/03/2026",
+            clientReference: "SPM-22091",
+            dateReceived: "03/18/2026 09:24 AM",
+            blockingCompany: "CRC",
+            blockingBroker: "Owen Hart",
+            blockingSubId: "219-SPM-22091",
+            recommendation: "Review protection updates before clearing."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Owen Hart",
+            assistant: "Leah Voss",
+            emailSender: "ohart@crc-demo.com",
+            requestedUw: "Chris Allen"
+          },
+          email: {
+            from: "Owen Hart <ohart@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Leah Voss <lvoss@crc-demo.com>",
+            subject: "Silver Pine Manufacturing submission with updated sprinkler credits",
+            received: "Wednesday, March 18, 2026 at 9:24 AM",
+            bodyIntro: [
+              "Hi all,",
+              "Sharing the Silver Pine Manufacturing submission. The insured completed sprinkler improvements and I attached the support letter.",
+              "We still need to confirm occupancy at one building, but the rest of the packet is complete."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Sprinkler letter attached",
+              "Protection summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-110",
+          insured: "Lakeshore Senior Living",
+          broker: "Mia Jordan",
+          company: "Amwins",
+          dti: "66",
+          inceptDate: "Nov 1, 2026",
+          dateReceived: "Mar 17, 2026 05:50 PM",
+          subject: "Lakeshore Senior Living renewal with updated valuation statement",
+          sender: "Mia Jordan",
+          senderEmail: "mjordan@amwins-demo.com",
+          line: "Senior Housing",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$58,304,220",
+          priority: "Ready for market",
+          notes: [
+            "Updated valuation statement included.",
+            "No changes to occupancy or operating model."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Valuation Statement",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "77 Lakeshore Commons",
+            address2: "",
+            city: "Madison",
+            state: "WI",
+            zip: "53703",
+            fein: "39-2221048",
+            naics: "623311",
+            ofac: "Clear",
+            homeState: "Wisconsin",
+            description: "Independent and assisted living campuses with owned real estate."
+          },
+          submissionDetails: {
+            incept: "11/01/2026",
+            expiry: "11/01/2027",
+            needBy: "04/01/2026",
+            clientReference: "LSL-70814",
+            dateReceived: "03/17/2026 05:50 PM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Mia Jordan",
+            blockingSubId: "066-LSL-70814",
+            recommendation: "Clear for quoting. Valuation statement attached."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Mia Jordan",
+            assistant: "Kay Reese",
+            emailSender: "mjordan@amwins-demo.com",
+            requestedUw: "Irene Moss"
+          },
+          email: {
+            from: "Mia Jordan <mjordan@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Kay Reese <kreese@amwins-demo.com>",
+            subject: "Lakeshore Senior Living renewal with updated valuation statement",
+            received: "Tuesday, March 17, 2026 at 5:50 PM",
+            bodyIntro: [
+              "Good evening,",
+              "Attached is the Lakeshore Senior Living renewal. The main update is the refreshed valuation statement, which is included in the packet.",
+              "Everything else is materially consistent with the expiring submission."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Valuation statement attached",
+              "Loss summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-111",
+          insured: "Granite Ridge Contractors",
+          broker: "Victor Hale",
+          company: "CRC",
+          dti: "511",
+          inceptDate: "May 14, 2026",
+          dateReceived: "Mar 16, 2026 11:08 AM",
+          subject: "Granite Ridge Contractors package with inland marine supplement",
+          sender: "Victor Hale",
+          senderEmail: "vhale@crc-demo.com",
+          line: "Contractors Package",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$21,994,300",
+          priority: "Check IM schedule",
+          notes: [
+            "Inland marine schedule added for mobile equipment.",
+            "Builder's risk section not requested."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Inland Marine",
+            misc2: "Equipment Schedule"
+          },
+          insuredDetails: {
+            address1: "910 Quarry Run",
+            address2: "",
+            city: "Denver",
+            state: "CO",
+            zip: "80202",
+            fein: "84-5510392",
+            naics: "236220",
+            ofac: "Clear",
+            homeState: "Colorado",
+            description: "General contractor with owned yards, offices, and scheduled mobile equipment."
+          },
+          submissionDetails: {
+            incept: "05/14/2026",
+            expiry: "05/14/2027",
+            needBy: "03/28/2026",
+            clientReference: "GRC-55190",
+            dateReceived: "03/16/2026 11:08 AM",
+            blockingCompany: "CRC",
+            blockingBroker: "Victor Hale",
+            blockingSubId: "511-GRC-55190",
+            recommendation: "Review inland marine schedule before release."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Victor Hale",
+            assistant: "Molly Reed",
+            emailSender: "vhale@crc-demo.com",
+            requestedUw: "Aaron Price"
+          },
+          email: {
+            from: "Victor Hale <vhale@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Molly Reed <mreed@crc-demo.com>",
+            subject: "Granite Ridge Contractors package with inland marine supplement",
+            received: "Monday, March 16, 2026 at 11:08 AM",
+            bodyIntro: [
+              "Hi,",
+              "Please review the Granite Ridge Contractors package. The insured added an inland marine schedule for mobile equipment, which is attached.",
+              "No builder's risk exposure is being requested at this time."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Inland marine supplement attached",
+              "Equipment schedule attached"
+            ]
+          }
+        },
+        {
+          id: "sub-112",
+          insured: "Willow Creek Apartments",
+          broker: "Sophie Dunn",
+          company: "Amwins",
+          dti: "73",
+          inceptDate: "Jun 30, 2026",
+          dateReceived: "Mar 15, 2026 09:02 AM",
+          subject: "Willow Creek Apartments renewal with updated statement of values",
+          sender: "Sophie Dunn",
+          senderEmail: "sdunn@amwins-demo.com",
+          line: "Habitational",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$44,108,901",
+          priority: "Ready for market",
+          notes: [
+            "Updated statement of values attached.",
+            "No changes to occupancy mix were reported."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Property Section",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "144 Willow Creek Lane",
+            address2: "",
+            city: "Charlotte",
+            state: "NC",
+            zip: "28202",
+            fein: "56-1902847",
+            naics: "531110",
+            ofac: "Clear",
+            homeState: "North Carolina",
+            description: "Apartment community with multiple wood-frame buildings and clubhouse."
+          },
+          submissionDetails: {
+            incept: "06/30/2026",
+            expiry: "06/30/2027",
+            needBy: "03/27/2026",
+            clientReference: "WCA-10044",
+            dateReceived: "03/15/2026 09:02 AM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Sophie Dunn",
+            blockingSubId: "073-WCA-10044",
+            recommendation: "Clear for quoting with updated SOV attached."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Sophie Dunn",
+            assistant: "Jared Moss",
+            emailSender: "sdunn@amwins-demo.com",
+            requestedUw: "Lena Clark"
+          },
+          email: {
+            from: "Sophie Dunn <sdunn@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Jared Moss <jmoss@amwins-demo.com>",
+            subject: "Willow Creek Apartments renewal with updated statement of values",
+            received: "Sunday, March 15, 2026 at 9:02 AM",
+            bodyIntro: [
+              "Good morning,",
+              "Attached is the Willow Creek Apartments renewal. The statement of values has been updated and is included with the ACORD pages.",
+              "Please let me know if you need any additional property detail."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Certified SOV attached",
+              "Loss summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-113",
+          insured: "Brightline Food Distributors",
+          broker: "Noah Ellis",
+          company: "CRC",
+          dti: "188",
+          inceptDate: "Jul 18, 2026",
+          dateReceived: "Mar 14, 2026 03:11 PM",
+          subject: "Brightline Food Distributors submission with refrigerated stock values",
+          sender: "Noah Ellis",
+          senderEmail: "nellis@crc-demo.com",
+          line: "Food Distribution",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$39,660,750",
+          priority: "Stock value review",
+          notes: [
+            "Refrigerated stock values added as separate support.",
+            "Broker asked for quick turnaround before market approach."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Stock Values",
+            misc2: "Loss Runs"
+          },
+          insuredDetails: {
+            address1: "615 Distribution Center Pkwy",
+            address2: "",
+            city: "Memphis",
+            state: "TN",
+            zip: "38103",
+            fein: "62-8810345",
+            naics: "424420",
+            ofac: "Clear",
+            homeState: "Tennessee",
+            description: "Regional food distributor with refrigerated warehouse exposure."
+          },
+          submissionDetails: {
+            incept: "07/18/2026",
+            expiry: "07/18/2027",
+            needBy: "03/26/2026",
+            clientReference: "BFD-41120",
+            dateReceived: "03/14/2026 03:11 PM",
+            blockingCompany: "CRC",
+            blockingBroker: "Noah Ellis",
+            blockingSubId: "188-BFD-41120",
+            recommendation: "Review refrigerated stock values before advancing."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Noah Ellis",
+            assistant: "Rita Snow",
+            emailSender: "nellis@crc-demo.com",
+            requestedUw: "Mason Gray"
+          },
+          email: {
+            from: "Noah Ellis <nellis@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Rita Snow <rsnow@crc-demo.com>",
+            subject: "Brightline Food Distributors submission with refrigerated stock values",
+            received: "Saturday, March 14, 2026 at 3:11 PM",
+            bodyIntro: [
+              "Hello team,",
+              "Forwarding the Brightline Food Distributors package. Refrigerated stock values are separately identified in the support file.",
+              "Please review quickly if possible so we can keep the placement moving."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Stock values attached",
+              "Loss runs attached"
+            ]
+          }
+        },
+        {
+          id: "sub-114",
+          insured: "Prairie View Schools",
+          broker: "Emma Brooks",
+          company: "Amwins",
+          dti: "91",
+          inceptDate: "Aug 1, 2026",
+          dateReceived: "Mar 13, 2026 07:47 AM",
+          subject: "Prairie View Schools package with campus valuation supplement",
+          sender: "Emma Brooks",
+          senderEmail: "ebrooks@amwins-demo.com",
+          line: "Educational Property",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$112,904,100",
+          priority: "Large campus account",
+          notes: [
+            "Campus valuation supplement attached.",
+            "No prior conflict identified."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Campus Valuation",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "12 Scholar Way",
+            address2: "",
+            city: "Omaha",
+            state: "NE",
+            zip: "68102",
+            fein: "47-3001189",
+            naics: "611110",
+            ofac: "Clear",
+            homeState: "Nebraska",
+            description: "Private school campus with multiple academic, dormitory, and athletic buildings."
+          },
+          submissionDetails: {
+            incept: "08/01/2026",
+            expiry: "08/01/2027",
+            needBy: "03/27/2026",
+            clientReference: "PVS-22017",
+            dateReceived: "03/13/2026 07:47 AM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Emma Brooks",
+            blockingSubId: "091-PVS-22017",
+            recommendation: "Clear for quoting with campus valuation supplement attached."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Emma Brooks",
+            assistant: "Lori Kent",
+            emailSender: "ebrooks@amwins-demo.com",
+            requestedUw: "Sam Drew"
+          },
+          email: {
+            from: "Emma Brooks <ebrooks@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Lori Kent <lkent@amwins-demo.com>",
+            subject: "Prairie View Schools package with campus valuation supplement",
+            received: "Friday, March 13, 2026 at 7:47 AM",
+            bodyIntro: [
+              "Good morning,",
+              "Attached is the Prairie View Schools package. I included the campus valuation supplement so the property totals can be reviewed alongside the ACORD pages.",
+              "This should be ready to move once clearance is confirmed."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Campus valuation supplement attached",
+              "Loss summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-115",
+          insured: "Metro Artisan Bakers",
+          broker: "Luke Warren",
+          company: "CRC",
+          dti: "144",
+          inceptDate: "Jul 27, 2026",
+          dateReceived: "Mar 12, 2026 12:28 PM",
+          subject: "Metro Artisan Bakers package renewal with updated bakery equipment values",
+          sender: "Luke Warren",
+          senderEmail: "lwarren@crc-demo.com",
+          line: "Food Manufacturing",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$12,880,440",
+          priority: "Review equipment values",
+          notes: [
+            "Updated bakery equipment values included.",
+            "Business income requested on blanket basis."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Equipment Values",
+            misc2: "BI Summary"
+          },
+          insuredDetails: {
+            address1: "501 Dough Works Ave",
+            address2: "",
+            city: "St. Louis",
+            state: "MO",
+            zip: "63101",
+            fein: "43-8821140",
+            naics: "311811",
+            ofac: "Clear",
+            homeState: "Missouri",
+            description: "Wholesale bakery operation with production, storage, and distribution exposure."
+          },
+          submissionDetails: {
+            incept: "07/27/2026",
+            expiry: "07/27/2027",
+            needBy: "03/25/2026",
+            clientReference: "MAB-31992",
+            dateReceived: "03/12/2026 12:28 PM",
+            blockingCompany: "CRC",
+            blockingBroker: "Luke Warren",
+            blockingSubId: "144-MAB-31992",
+            recommendation: "Review updated equipment values and BI request."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Luke Warren",
+            assistant: "Sierra Lane",
+            emailSender: "lwarren@crc-demo.com",
+            requestedUw: "Blake Monroe"
+          },
+          email: {
+            from: "Luke Warren <lwarren@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Sierra Lane <slane@crc-demo.com>",
+            subject: "Metro Artisan Bakers package renewal with updated bakery equipment values",
+            received: "Thursday, March 12, 2026 at 12:28 PM",
+            bodyIntro: [
+              "Hello,",
+              "Attached is the Metro Artisan Bakers renewal package. Updated bakery equipment values and BI support are included.",
+              "Please let me know if you need additional production details."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Equipment values attached",
+              "BI summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-116",
+          insured: "Ironwood Fabrication",
+          broker: "Claire Novak",
+          company: "CRC",
+          dti: "233",
+          inceptDate: "Aug 14, 2026",
+          dateReceived: "Mar 11, 2026 10:16 AM",
+          subject: "Ironwood Fabrication package with updated machinery schedule",
+          sender: "Claire Novak",
+          senderEmail: "cnovak@crc-demo.com",
+          line: "Manufacturing",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$29,440,200",
+          priority: "Machinery review",
+          notes: [
+            "Updated machinery schedule included.",
+            "No major valuation changes outside equipment."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Machinery Schedule",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "275 Forge Park",
+            address2: "",
+            city: "Indianapolis",
+            state: "IN",
+            zip: "46204",
+            fein: "35-9081122",
+            naics: "332312",
+            ofac: "Clear",
+            homeState: "Indiana",
+            description: "Metal fabrication account with scheduled production equipment and storage buildings."
+          },
+          submissionDetails: {
+            incept: "08/14/2026",
+            expiry: "08/14/2027",
+            needBy: "03/24/2026",
+            clientReference: "IF-40218",
+            dateReceived: "03/11/2026 10:16 AM",
+            blockingCompany: "CRC",
+            blockingBroker: "Claire Novak",
+            blockingSubId: "233-IF-40218",
+            recommendation: "Review updated machinery schedule before clearing."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Claire Novak",
+            assistant: "Ramon Ellis",
+            emailSender: "cnovak@crc-demo.com",
+            requestedUw: "Dana Rowe"
+          },
+          email: {
+            from: "Claire Novak <cnovak@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Ramon Ellis <rellis@crc-demo.com>",
+            subject: "Ironwood Fabrication package with updated machinery schedule",
+            received: "Wednesday, March 11, 2026 at 10:16 AM",
+            bodyIntro: [
+              "Hello,",
+              "Attached is the Ironwood Fabrication package. The main change is the updated machinery schedule, which is included for review.",
+              "Please let me know if you need a more detailed equipment breakout."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Machinery schedule attached",
+              "Loss summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-117",
+          insured: "Riverton Self Storage",
+          broker: "Ben Harper",
+          company: "Amwins",
+          dti: "102",
+          inceptDate: "Sep 9, 2026",
+          dateReceived: "Mar 10, 2026 02:44 PM",
+          subject: "Riverton Self Storage renewal with hail supplement",
+          sender: "Ben Harper",
+          senderEmail: "bharper@amwins-demo.com",
+          line: "Self Storage",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$18,992,500",
+          priority: "Ready for market",
+          notes: [
+            "Hail supplement attached.",
+            "Roof updates completed at two locations."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Hail Supplement",
+            misc2: "Roof Update"
+          },
+          insuredDetails: {
+            address1: "830 Riverton Road",
+            address2: "",
+            city: "Wichita",
+            state: "KS",
+            zip: "67202",
+            fein: "48-5529010",
+            naics: "531130",
+            ofac: "Clear",
+            homeState: "Kansas",
+            description: "Regional self-storage operator with metal and frame storage buildings."
+          },
+          submissionDetails: {
+            incept: "09/09/2026",
+            expiry: "09/09/2027",
+            needBy: "03/23/2026",
+            clientReference: "RSS-21833",
+            dateReceived: "03/10/2026 02:44 PM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Ben Harper",
+            blockingSubId: "102-RSS-21833",
+            recommendation: "Clear for quoting with hail support attached."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Ben Harper",
+            assistant: "Julia Pike",
+            emailSender: "bharper@amwins-demo.com",
+            requestedUw: "Alyssa Grant"
+          },
+          email: {
+            from: "Ben Harper <bharper@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Julia Pike <jpike@amwins-demo.com>",
+            subject: "Riverton Self Storage renewal with hail supplement",
+            received: "Tuesday, March 10, 2026 at 2:44 PM",
+            bodyIntro: [
+              "Good afternoon,",
+              "Attached is the Riverton Self Storage renewal. I included the hail supplement and roof update support for the Kansas locations.",
+              "Everything else is largely consistent with the expiring structure."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Hail supplement attached",
+              "Roof update support attached"
+            ]
+          }
+        },
+        {
+          id: "sub-118",
+          insured: "Bluebird Senior Care",
+          broker: "Rachel Kim",
+          company: "CRC",
+          dti: "278",
+          inceptDate: "Oct 20, 2026",
+          dateReceived: "Mar 9, 2026 09:58 AM",
+          subject: "Bluebird Senior Care package with updated loss summary",
+          sender: "Rachel Kim",
+          senderEmail: "rkim@crc-demo.com",
+          line: "Senior Care",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$47,224,900",
+          priority: "Review prior losses",
+          notes: [
+            "Loss summary updated to include a recent water claim.",
+            "Broker requests quick conflict check."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Loss Summary",
+            misc2: "Water Claim Detail"
+          },
+          insuredDetails: {
+            address1: "99 Bluebird Lane",
+            address2: "",
+            city: "Columbus",
+            state: "OH",
+            zip: "43215",
+            fein: "31-4412090",
+            naics: "623110",
+            ofac: "Clear",
+            homeState: "Ohio",
+            description: "Senior care campuses with resident care, dining, and activity buildings."
+          },
+          submissionDetails: {
+            incept: "10/20/2026",
+            expiry: "10/20/2027",
+            needBy: "03/22/2026",
+            clientReference: "BSC-99210",
+            dateReceived: "03/09/2026 09:58 AM",
+            blockingCompany: "CRC",
+            blockingBroker: "Rachel Kim",
+            blockingSubId: "278-BSC-99210",
+            recommendation: "Review updated loss summary before clearing."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Rachel Kim",
+            assistant: "Marta Lee",
+            emailSender: "rkim@crc-demo.com",
+            requestedUw: "Kevin Moss"
+          },
+          email: {
+            from: "Rachel Kim <rkim@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Marta Lee <mlee@crc-demo.com>",
+            subject: "Bluebird Senior Care package with updated loss summary",
+            received: "Monday, March 9, 2026 at 9:58 AM",
+            bodyIntro: [
+              "Hello team,",
+              "Attached is the Bluebird Senior Care package. The loss summary was refreshed to include a recent water claim.",
+              "Please review that item before we move forward."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Loss summary attached",
+              "Water claim detail attached"
+            ]
+          }
+        },
+        {
+          id: "sub-119",
+          insured: "Evergreen Office Park",
+          broker: "Tessa Ford",
+          company: "Amwins",
+          dti: "61",
+          inceptDate: "Jul 11, 2026",
+          dateReceived: "Mar 8, 2026 04:22 PM",
+          subject: "Evergreen Office Park renewal with updated tenant schedule",
+          sender: "Tessa Ford",
+          senderEmail: "tford@amwins-demo.com",
+          line: "Office Property",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$53,880,000",
+          priority: "Ready for market",
+          notes: [
+            "Tenant schedule attached.",
+            "Occupancy remains over 90% across all buildings."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Tenant Schedule",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "700 Evergreen Plaza",
+            address2: "",
+            city: "Portland",
+            state: "OR",
+            zip: "97204",
+            fein: "93-2018841",
+            naics: "531120",
+            ofac: "Clear",
+            homeState: "Oregon",
+            description: "Multi-building suburban office park with retail outparcel exposure."
+          },
+          submissionDetails: {
+            incept: "07/11/2026",
+            expiry: "07/11/2027",
+            needBy: "03/21/2026",
+            clientReference: "EOP-77111",
+            dateReceived: "03/08/2026 04:22 PM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Tessa Ford",
+            blockingSubId: "061-EOP-77111",
+            recommendation: "Clear for quoting with updated tenant schedule."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Tessa Ford",
+            assistant: "Nadia Park",
+            emailSender: "tford@amwins-demo.com",
+            requestedUw: "Greg Sutton"
+          },
+          email: {
+            from: "Tessa Ford <tford@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Nadia Park <npark@amwins-demo.com>",
+            subject: "Evergreen Office Park renewal with updated tenant schedule",
+            received: "Sunday, March 8, 2026 at 4:22 PM",
+            bodyIntro: [
+              "Hi,",
+              "Attached is the Evergreen Office Park renewal. The updated tenant schedule is included with the property packet.",
+              "Please let me know if you need anything additional for the office occupancy review."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Tenant schedule attached",
+              "Loss summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-120",
+          insured: "Highland Equipment Rental",
+          broker: "Adam Price",
+          company: "CRC",
+          dti: "356",
+          inceptDate: "Nov 22, 2026",
+          dateReceived: "Mar 7, 2026 08:37 AM",
+          subject: "Highland Equipment Rental submission with yard schedule",
+          sender: "Adam Price",
+          senderEmail: "aprice@crc-demo.com",
+          line: "Equipment Rental",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$27,090,610",
+          priority: "Review yard exposure",
+          notes: [
+            "Yard schedule attached.",
+            "Large amount of outdoor equipment storage."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Yard Schedule",
+            misc2: "Equipment Breakdown"
+          },
+          insuredDetails: {
+            address1: "410 Highland Yard Rd",
+            address2: "",
+            city: "Salt Lake City",
+            state: "UT",
+            zip: "84101",
+            fein: "87-4110298",
+            naics: "532412",
+            ofac: "Clear",
+            homeState: "Utah",
+            description: "Heavy equipment rental account with open yard and service shop exposure."
+          },
+          submissionDetails: {
+            incept: "11/22/2026",
+            expiry: "11/22/2027",
+            needBy: "03/20/2026",
+            clientReference: "HER-60119",
+            dateReceived: "03/07/2026 08:37 AM",
+            blockingCompany: "CRC",
+            blockingBroker: "Adam Price",
+            blockingSubId: "356-HER-60119",
+            recommendation: "Review yard schedule and outdoor storage concentration."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Adam Price",
+            assistant: "Tina Bell",
+            emailSender: "aprice@crc-demo.com",
+            requestedUw: "Sean Avery"
+          },
+          email: {
+            from: "Adam Price <aprice@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Tina Bell <tbell@crc-demo.com>",
+            subject: "Highland Equipment Rental submission with yard schedule",
+            received: "Saturday, March 7, 2026 at 8:37 AM",
+            bodyIntro: [
+              "Good morning,",
+              "Please review the Highland Equipment Rental submission. I attached the yard schedule and equipment breakdown support.",
+              "Outdoor storage is the main review point on this one."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Yard schedule attached",
+              "Equipment breakdown attached"
+            ]
+          }
+        },
+        {
+          id: "sub-121",
+          insured: "Summit Dental Partners",
+          broker: "Ella Chen",
+          company: "Amwins",
+          dti: "84",
+          inceptDate: "Dec 1, 2026",
+          dateReceived: "Mar 6, 2026 01:09 PM",
+          subject: "Summit Dental Partners package with updated leasehold values",
+          sender: "Ella Chen",
+          senderEmail: "echen@amwins-demo.com",
+          line: "Healthcare",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$14,338,220",
+          priority: "Ready for market",
+          notes: [
+            "Leasehold improvements updated across three locations.",
+            "No material loss activity noted."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Leasehold Values",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "125 Summit Place",
+            address2: "",
+            city: "Raleigh",
+            state: "NC",
+            zip: "27601",
+            fein: "56-7782014",
+            naics: "621210",
+            ofac: "Clear",
+            homeState: "North Carolina",
+            description: "Dental practice group with multiple leased clinic locations."
+          },
+          submissionDetails: {
+            incept: "12/01/2026",
+            expiry: "12/01/2027",
+            needBy: "03/20/2026",
+            clientReference: "SDP-88122",
+            dateReceived: "03/06/2026 01:09 PM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Ella Chen",
+            blockingSubId: "084-SDP-88122",
+            recommendation: "Clear for quoting with updated leasehold values."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Ella Chen",
+            assistant: "Marcy Lin",
+            emailSender: "echen@amwins-demo.com",
+            requestedUw: "Paul Hart"
+          },
+          email: {
+            from: "Ella Chen <echen@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Marcy Lin <mlin@amwins-demo.com>",
+            subject: "Summit Dental Partners package with updated leasehold values",
+            received: "Friday, March 6, 2026 at 1:09 PM",
+            bodyIntro: [
+              "Hello team,",
+              "Attached is the Summit Dental Partners package. Leasehold improvement values were refreshed for several leased offices.",
+              "Everything else should be straightforward."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Leasehold values attached",
+              "Loss summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-122",
+          insured: "Clearwater Marina Holdings",
+          broker: "Jordan Blake",
+          company: "CRC",
+          dti: "390",
+          inceptDate: "Jun 5, 2026",
+          dateReceived: "Mar 5, 2026 11:41 AM",
+          subject: "Clearwater Marina Holdings package with wind support",
+          sender: "Jordan Blake",
+          senderEmail: "jblake@crc-demo.com",
+          line: "Marina / Property",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$38,110,700",
+          priority: "Wind review needed",
+          notes: [
+            "Wind support attachment included.",
+            "Dock exposure and TIV concentrations need review."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Wind Support",
+            misc2: "Dock Schedule"
+          },
+          insuredDetails: {
+            address1: "22 Clearwater Marina Way",
+            address2: "",
+            city: "Mobile",
+            state: "AL",
+            zip: "36602",
+            fein: "63-7112048",
+            naics: "713930",
+            ofac: "Clear",
+            homeState: "Alabama",
+            description: "Marina and waterfront property account with docks, slips, and service buildings."
+          },
+          submissionDetails: {
+            incept: "06/05/2026",
+            expiry: "06/05/2027",
+            needBy: "03/19/2026",
+            clientReference: "CMH-41901",
+            dateReceived: "03/05/2026 11:41 AM",
+            blockingCompany: "CRC",
+            blockingBroker: "Jordan Blake",
+            blockingSubId: "390-CMH-41901",
+            recommendation: "Review wind support and dock schedule before clearing."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Jordan Blake",
+            assistant: "Heidi Ross",
+            emailSender: "jblake@crc-demo.com",
+            requestedUw: "Ryan Cole"
+          },
+          email: {
+            from: "Jordan Blake <jblake@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Heidi Ross <hross@crc-demo.com>",
+            subject: "Clearwater Marina Holdings package with wind support",
+            received: "Thursday, March 5, 2026 at 11:41 AM",
+            bodyIntro: [
+              "Good morning,",
+              "Please review the Clearwater Marina Holdings package. Wind support and a dock schedule are attached.",
+              "We want to understand concentration concerns before approaching markets."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Wind support attached",
+              "Dock schedule attached"
+            ]
+          }
+        },
+        {
+          id: "sub-123",
+          insured: "Westgate Retail Centers",
+          broker: "Paige Morris",
+          company: "Amwins",
+          dti: "58",
+          inceptDate: "Sep 30, 2026",
+          dateReceived: "Mar 4, 2026 05:18 PM",
+          subject: "Westgate Retail Centers renewal with updated rent roll",
+          sender: "Paige Morris",
+          senderEmail: "pmorris@amwins-demo.com",
+          line: "Retail Property",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$67,803,440",
+          priority: "Ready for market",
+          notes: [
+            "Updated rent roll attached.",
+            "No change in occupancy concentration."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Rent Roll",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "808 Westgate Commons",
+            address2: "",
+            city: "Tampa",
+            state: "FL",
+            zip: "33602",
+            fein: "59-2011004",
+            naics: "531120",
+            ofac: "Clear",
+            homeState: "Florida",
+            description: "Neighborhood retail center portfolio with grocery and restaurant tenants."
+          },
+          submissionDetails: {
+            incept: "09/30/2026",
+            expiry: "09/30/2027",
+            needBy: "03/19/2026",
+            clientReference: "WRC-10560",
+            dateReceived: "03/04/2026 05:18 PM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Paige Morris",
+            blockingSubId: "058-WRC-10560",
+            recommendation: "Clear for quoting with updated rent roll."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Paige Morris",
+            assistant: "Neil Park",
+            emailSender: "pmorris@amwins-demo.com",
+            requestedUw: "Trevor Hale"
+          },
+          email: {
+            from: "Paige Morris <pmorris@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Neil Park <npark@amwins-demo.com>",
+            subject: "Westgate Retail Centers renewal with updated rent roll",
+            received: "Wednesday, March 4, 2026 at 5:18 PM",
+            bodyIntro: [
+              "Hello,",
+              "Attached is the Westgate Retail Centers renewal. I included the updated rent roll and current property support.",
+              "Please advise if any tenant concentration concerns need to be addressed."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Rent roll attached",
+              "Loss summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-124",
+          insured: "Northshore Veterinary Group",
+          broker: "Liam Scott",
+          company: "CRC",
+          dti: "167",
+          inceptDate: "Aug 28, 2026",
+          dateReceived: "Mar 3, 2026 07:55 AM",
+          subject: "Northshore Veterinary Group package with updated equipment values",
+          sender: "Liam Scott",
+          senderEmail: "lscott@crc-demo.com",
+          line: "Veterinary / Property",
+          status: "Review",
+          triage: "Needs Review",
+          tiv: "$11,604,880",
+          priority: "Equipment review",
+          notes: [
+            "Medical equipment values updated.",
+            "No recent property losses reported."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Equipment Values",
+            misc2: "Loss Summary"
+          },
+          insuredDetails: {
+            address1: "66 Northshore Pkwy",
+            address2: "",
+            city: "Milwaukee",
+            state: "WI",
+            zip: "53202",
+            fein: "39-8841020",
+            naics: "541940",
+            ofac: "Clear",
+            homeState: "Wisconsin",
+            description: "Veterinary clinic group with medical equipment and boarding exposure."
+          },
+          submissionDetails: {
+            incept: "08/28/2026",
+            expiry: "08/28/2027",
+            needBy: "03/18/2026",
+            clientReference: "NVG-66107",
+            dateReceived: "03/03/2026 07:55 AM",
+            blockingCompany: "CRC",
+            blockingBroker: "Liam Scott",
+            blockingSubId: "167-NVG-66107",
+            recommendation: "Review updated equipment values before clearing."
+          },
+          brokerDetails: {
+            brokerCompany: "CRC",
+            broker: "Liam Scott",
+            assistant: "Erin Cole",
+            emailSender: "lscott@crc-demo.com",
+            requestedUw: "Mia Torres"
+          },
+          email: {
+            from: "Liam Scott <lscott@crc-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Erin Cole <ecole@crc-demo.com>",
+            subject: "Northshore Veterinary Group package with updated equipment values",
+            received: "Tuesday, March 3, 2026 at 7:55 AM",
+            bodyIntro: [
+              "Good morning,",
+              "Attached is the Northshore Veterinary Group package. The updated medical equipment values are included in the support files.",
+              "Please review and let me know if you need any further breakdown."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Equipment values attached",
+              "Loss summary attached"
+            ]
+          }
+        },
+        {
+          id: "sub-125",
+          insured: "Copper State Distributors",
+          broker: "Megan Shaw",
+          company: "Amwins",
+          dti: "95",
+          inceptDate: "Oct 12, 2026",
+          dateReceived: "Mar 2, 2026 03:03 PM",
+          subject: "Copper State Distributors package with warehouse supplement",
+          sender: "Megan Shaw",
+          senderEmail: "mshaw@amwins-demo.com",
+          line: "Warehouse / Distribution",
+          status: "Clear",
+          triage: "Pass",
+          tiv: "$31,701,550",
+          priority: "Ready for market",
+          notes: [
+            "Warehouse supplement attached.",
+            "Broker included updated sprinkler details."
+          ],
+          attachments: {
+            email: "Email",
+            sov: "Certified SOV",
+            acord: "ACORD",
+            misc1: "Warehouse Supplement",
+            misc2: "Sprinkler Detail"
+          },
+          insuredDetails: {
+            address1: "400 Copper State Way",
+            address2: "",
+            city: "Phoenix",
+            state: "AZ",
+            zip: "85007",
+            fein: "86-3312104",
+            naics: "493110",
+            ofac: "Clear",
+            homeState: "Arizona",
+            description: "Wholesale distributor with warehouse and light assembly exposure."
+          },
+          submissionDetails: {
+            incept: "10/12/2026",
+            expiry: "10/12/2027",
+            needBy: "03/18/2026",
+            clientReference: "CSD-72014",
+            dateReceived: "03/02/2026 03:03 PM",
+            blockingCompany: "Amwins",
+            blockingBroker: "Megan Shaw",
+            blockingSubId: "095-CSD-72014",
+            recommendation: "Clear for quoting with warehouse supplement attached."
+          },
+          brokerDetails: {
+            brokerCompany: "Amwins",
+            broker: "Megan Shaw",
+            assistant: "Kyle Dean",
+            emailSender: "mshaw@amwins-demo.com",
+            requestedUw: "Nora Blake"
+          },
+          email: {
+            from: "Megan Shaw <mshaw@amwins-demo.com>",
+            to: "Clearance Desk <clearance@pingops-demo.com>",
+            cc: "Kyle Dean <kdean@amwins-demo.com>",
+            subject: "Copper State Distributors package with warehouse supplement",
+            received: "Monday, March 2, 2026 at 3:03 PM",
+            bodyIntro: [
+              "Hi team,",
+              "Attached is the Copper State Distributors package. The warehouse supplement and updated sprinkler support are included.",
+              "This should be ready to move once cleared."
+            ],
+            bullets: [
+              "ACORD attached",
+              "Warehouse supplement attached",
+              "Sprinkler detail attached"
+            ]
+          }
+        }
+      ];
+
+      const attachmentOrder = ["email", "sov", "acord", "misc1", "misc2"];
+      let selectedSubmissionId = "sub-102";
+      let leftPanelSubmissionId = "sub-102";
+      let selectedSubmissionIds = new Set(["sub-102"]);
+      let rangeAnchorSubmissionId = "sub-102";
+      let selectedAttachment = "email";
+      let insuredMode = "new";
+      let sortKey = "dateReceived";
+      let sortDirection = "desc";
+      const defaultColumns = [
+        { key: "insured", label: "Insured", sort: "insured", widthVar: "submission", min: 92, visible: true, resizable: true },
+        { key: "broker", label: "Broker", sort: "broker", widthVar: "broker", min: 72, visible: true, resizable: true },
+        { key: "company", label: "Broker Company", sort: "company", widthVar: "company", min: 84, visible: true, resizable: true },
+        { key: "dti", label: "DTI", sort: "dti", widthVar: "dti", min: 40, visible: true, resizable: true },
+        { key: "inceptDate", label: "Incpt Date", sort: "inceptDate", widthVar: "incept", min: 64, visible: true, resizable: true },
+        { key: "dateReceived", label: "Date Received", sort: "dateReceived", widthVar: "received", min: 88, visible: true, resizable: true },
+        { key: "subject", label: "Subject", sort: "subject", widthVar: "subject", min: 92, visible: true, resizable: false }
+      ];
+      let columnConfig = defaultColumns.map((column) => ({ ...column }));
+      let draftColumnConfig = null;
+      const densitySteps = [
+        { pad: 0, font: 6, meta: 6, detailTitle: 11, detailLabel: 8, detailValue: 8, detailNote: 8, detailPill: 8, fieldPadY: 3, fieldPadX: 6, textareaPadY: 4, textareaPadX: 6 },
+        { pad: 0, font: 7, meta: 6, detailTitle: 12, detailLabel: 9, detailValue: 9, detailNote: 9, detailPill: 9, fieldPadY: 4, fieldPadX: 7, textareaPadY: 5, textareaPadX: 7 },
+        { pad: 1, font: 8, meta: 7, detailTitle: 12, detailLabel: 9, detailValue: 9, detailNote: 9, detailPill: 9, fieldPadY: 4, fieldPadX: 8, textareaPadY: 5, textareaPadX: 8 },
+        { pad: 3, font: 9, meta: 8, detailTitle: 13, detailLabel: 10, detailValue: 10, detailNote: 10, detailPill: 10, fieldPadY: 5, fieldPadX: 8, textareaPadY: 6, textareaPadX: 8 },
+        { pad: 5, font: 10, meta: 9, detailTitle: 14, detailLabel: 10, detailValue: 10, detailNote: 10, detailPill: 10, fieldPadY: 6, fieldPadX: 9, textareaPadY: 7, textareaPadX: 9 },
+        { pad: 7, font: 11, meta: 10, detailTitle: 15, detailLabel: 11, detailValue: 11, detailNote: 11, detailPill: 11, fieldPadY: 7, fieldPadX: 10, textareaPadY: 8, textareaPadX: 10 },
+        { pad: 9, font: 12, meta: 11, detailTitle: 16, detailLabel: 12, detailValue: 12, detailNote: 12, detailPill: 12, fieldPadY: 8, fieldPadX: 11, textareaPadY: 9, textareaPadX: 11 }
+      ];
+      let densityIndex = 4;
+
+      const submissionList = document.getElementById("submissionList");
+      const insuredFields = document.getElementById("insuredFields");
+      const insuredDescription = document.getElementById("insuredDescription");
+      const submissionFields = document.getElementById("submissionFields");
+      const brokerFields = document.getElementById("brokerFields");
+      const notesList = document.getElementById("notesList");
+      const recommendation = document.getElementById("recommendation");
+      const triageStatus = document.getElementById("triageStatus");
+      const docTabs = document.getElementById("docTabs");
+      const docSelect = document.getElementById("docSelect");
+      const previewTitle = document.getElementById("previewTitle");
+      const previewArea = document.getElementById("previewArea");
+      const densityDown = document.getElementById("densityDown");
+      const densityUp = document.getElementById("densityUp");
+      const detailResizeHandle = document.getElementById("detailResizeHandle");
+      const submissionHead = document.getElementById("submissionHead");
+      const insuredModeToggle = document.getElementById("insuredModeToggle");
+      const columnSettingsBtn = document.getElementById("columnSettingsBtn");
+      const columnModal = document.getElementById("columnModal");
+      const columnPickerList = document.getElementById("columnPickerList");
+      const columnModalClose = document.getElementById("columnModalClose");
+      const columnCancelBtn = document.getElementById("columnCancelBtn");
+      const columnSaveBtn = document.getElementById("columnSaveBtn");
+      const columnResetBtn = document.getElementById("columnResetBtn");
+
+      const stateAbbreviations = {
+        Alabama: "AL",
+        Alaska: "AK",
+        Arizona: "AZ",
+        Arkansas: "AR",
+        California: "CA",
+        Colorado: "CO",
+        Connecticut: "CT",
+        Delaware: "DE",
+        Florida: "FL",
+        Georgia: "GA",
+        Hawaii: "HI",
+        Idaho: "ID",
+        Illinois: "IL",
+        Indiana: "IN",
+        Iowa: "IA",
+        Kansas: "KS",
+        Kentucky: "KY",
+        Louisiana: "LA",
+        Maine: "ME",
+        Maryland: "MD",
+        Massachusetts: "MA",
+        Michigan: "MI",
+        Minnesota: "MN",
+        Mississippi: "MS",
+        Missouri: "MO",
+        Montana: "MT",
+        Nebraska: "NE",
+        Nevada: "NV",
+        "New Hampshire": "NH",
+        "New Jersey": "NJ",
+        "New Mexico": "NM",
+        "New York": "NY",
+        "North Carolina": "NC",
+        "North Dakota": "ND",
+        Ohio: "OH",
+        Oklahoma: "OK",
+        Oregon: "OR",
+        Pennsylvania: "PA",
+        "Rhode Island": "RI",
+        "South Carolina": "SC",
+        "South Dakota": "SD",
+        Tennessee: "TN",
+        Texas: "TX",
+        Utah: "UT",
+        Vermont: "VT",
+        Virginia: "VA",
+        Washington: "WA",
+        "West Virginia": "WV",
+        Wisconsin: "WI",
+        Wyoming: "WY"
+      };
+
+      function getSelectedSubmission() {
+        if (!selectedSubmissionId) return null;
+        return submissions.find((item) => item.id === selectedSubmissionId) || null;
+      }
+
+      function getLeftPanelSubmission() {
+        if (!leftPanelSubmissionId) return null;
+        return submissions.find((item) => item.id === leftPanelSubmissionId) || null;
+      }
+
+      function clearActiveSubmission() {
+        selectedSubmissionId = null;
+        leftPanelSubmissionId = null;
+        selectedSubmissionIds = new Set();
+        rangeAnchorSubmissionId = null;
+        render();
+      }
+
+      function setActiveSubmission(nextId) {
+        selectedSubmissionId = nextId;
+        leftPanelSubmissionId = nextId;
+        selectedSubmissionIds = new Set([nextId]);
+        rangeAnchorSubmissionId = nextId;
+        selectedAttachment = "email";
+        render();
+      }
+
+      function getSortedSubmissions() {
+        return [...submissions].sort((a, b) => {
+          const av = String(a[sortKey] ?? "").toLowerCase();
+          const bv = String(b[sortKey] ?? "").toLowerCase();
+          if (av < bv) return sortDirection === "asc" ? -1 : 1;
+          if (av > bv) return sortDirection === "asc" ? 1 : -1;
+          return 0;
+        });
+      }
+
+      function getVisibleColumns(config = columnConfig) {
+        return config.filter((column) => column.visible);
+      }
+
+      function getColumnTemplate(config = columnConfig) {
+        return getVisibleColumns(config)
+          .map((column) => `minmax(${column.min}px, var(--col-${column.widthVar}))`)
+          .join(" ");
+      }
+
+      function renderSubmissionHead() {
+        if (!submissionHead) return;
+        const visibleColumns = getVisibleColumns();
+        submissionHead.style.gridTemplateColumns = getColumnTemplate();
+        submissionHead.innerHTML = visibleColumns.map((column, index) => `
+          <div class="head-cell">
+            <button class="sort-button" data-sort="${column.sort}">
+              <span class="head-label ${column.key === "company" ? "stack centered" : ""}">${column.key === "company" ? "<span>Broker</span><span class=\"subline\">Company</span>" : column.label}</span>
+              <span class="sort-icon"></span>
+            </button>
+            ${column.resizable && index < visibleColumns.length - 1 ? `<button class="col-resizer" data-col="${column.widthVar}" data-min="${column.min}" aria-label="Resize ${column.label} column"></button>` : ""}
+          </div>
+        `).join("");
+      }
+
+      function getSubmissionCell(submission, columnKey) {
+        if (columnKey === "insured") {
+          return `
+            <div class="row-cell sub-main">
+              <div class="check">✓</div>
+              <div>
+                <div class="sub-title has-tooltip" data-tooltip="${submission.insured}">${submission.insured}</div>
+              </div>
+            </div>
+          `;
+        }
+        if (columnKey === "broker") {
+          return `<div class="row-cell"><div class="sub-title">${submission.broker}</div></div>`;
+        }
+        if (columnKey === "company") {
+          return `<div class="row-cell centered">${submission.company}</div>`;
+        }
+        if (columnKey === "dti") return `<div class="row-cell">${submission.dti}</div>`;
+        if (columnKey === "inceptDate") return `<div class="row-cell">${formatShortDate(submission.inceptDate)}</div>`;
+        if (columnKey === "dateReceived") return `<div class="row-cell">${formatShortDateTime(submission.dateReceived)}</div>`;
+        if (columnKey === "subject") return `<div class="row-cell cell-soft">${submission.subject}</div>`;
+        return `<div class="row-cell"></div>`;
+      }
+
+      function setActiveSubmissionRange(nextId) {
+        const sorted = getSortedSubmissions();
+        const anchorId = rangeAnchorSubmissionId || selectedSubmissionId || nextId;
+        const anchorIndex = sorted.findIndex((item) => item.id === anchorId);
+        const nextIndex = sorted.findIndex((item) => item.id === nextId);
+
+        if (anchorIndex === -1 || nextIndex === -1) {
+          setActiveSubmission(nextId);
+          return;
+        }
+
+        const [start, end] = anchorIndex < nextIndex
+          ? [anchorIndex, nextIndex]
+          : [nextIndex, anchorIndex];
+
+        selectedSubmissionIds = new Set(sorted.slice(start, end + 1).map((item) => item.id));
+        selectedSubmissionId = nextId;
+        leftPanelSubmissionId = nextId;
+        selectedAttachment = "email";
+        render();
+      }
+
+      function moveActiveSubmission(delta) {
+        if (!selectedSubmissionId) return;
+        const sorted = getSortedSubmissions();
+        const currentIndex = sorted.findIndex((item) => item.id === selectedSubmissionId);
+        if (currentIndex === -1) return;
+        const nextIndex = Math.max(0, Math.min(sorted.length - 1, currentIndex + delta));
+        const nextSubmission = sorted[nextIndex];
+        if (!nextSubmission || nextSubmission.id === selectedSubmissionId) return;
+        setActiveSubmission(nextSubmission.id);
+        requestAnimationFrame(() => {
+          const nextRow = submissionList?.querySelector(`[data-id="${nextSubmission.id}"]`);
+          nextRow?.scrollIntoView({ block: "nearest" });
+        });
+      }
+
+      function setPreviewAttachment(nextAttachment) {
+        selectedAttachment = nextAttachment;
+        renderPreviewPanels(getSelectedSubmission());
+      }
+
+      function statusClass(value) {
+        if (value === "Clear" || value === "Pass") return "clear";
+        if (value === "Block" || value === "Blocked") return "block";
+        return "review";
+      }
+
+      function field(label, value) {
+        return `
+          <div>
+            <div class="field-label">${label}</div>
+            <div class="field-value">${value || "—"}</div>
+          </div>
+        `;
+      }
+
+      function parseFlexibleDateInput(value) {
+        if (!value) return null;
+        const trimmed = String(value).trim();
+        const slashMatch = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2}|\d{4})$/);
+        if (slashMatch) {
+          let [, month, day, year] = slashMatch;
+          const normalizedYear = year.length === 2 ? `20${year}` : year;
+          const monthNum = Number(month);
+          const dayNum = Number(day);
+          const yearNum = Number(normalizedYear);
+          const parsed = new Date(yearNum, monthNum - 1, dayNum);
+          if (
+            !Number.isNaN(parsed.getTime()) &&
+            parsed.getFullYear() === yearNum &&
+            parsed.getMonth() === monthNum - 1 &&
+            parsed.getDate() === dayNum
+          ) {
+            return parsed;
+          }
+        }
+
+        const isoMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (isoMatch) {
+          const [, year, month, day] = isoMatch;
+          const parsed = new Date(Number(year), Number(month) - 1, Number(day));
+          if (!Number.isNaN(parsed.getTime())) return parsed;
+        }
+
+        const fallback = new Date(trimmed);
+        return Number.isNaN(fallback.getTime()) ? null : fallback;
+      }
+
+      function toIsoDateValue(value) {
+        const parsed = parseFlexibleDateInput(value);
+        if (!parsed) return "";
+        return `${parsed.getFullYear()}-${String(parsed.getMonth() + 1).padStart(2, "0")}-${String(parsed.getDate()).padStart(2, "0")}`;
+      }
+
+      function normalizeDateValue(value) {
+        const parsed = parseFlexibleDateInput(value);
+        if (!parsed) return value || "";
+        return `${parsed.getMonth() + 1}/${parsed.getDate()}/${parsed.getFullYear()}`;
+      }
+
+      function dateField(label, value, key) {
+        const displayValue = value ? formatShortDate(value) : "";
+        return `
+          <div>
+            <div class="field-label">${label}</div>
+            <div class="field-value date-input-shell">
+              <input class="date-field-input" type="text" value="${displayValue}" placeholder="m/d/yy" data-date-key="${key}" />
+              <button class="date-picker-btn" type="button" data-date-button="${key}" aria-label="Open ${label} date picker">
+                <svg viewBox="0 0 20 20" aria-hidden="true">
+                  <path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M5.25 2.75v2.5M14.75 2.75v2.5M3.75 5.25h12.5M4.75 4h10.5A1.75 1.75 0 0 1 17 5.75v9.5A1.75 1.75 0 0 1 15.25 17H4.75A1.75 1.75 0 0 1 3 15.25v-9.5A1.75 1.75 0 0 1 4.75 4Z"/>
+                  <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M6.6 9.1l.9.9M7.5 9.1l-.9.9M10.1 9.1l.9.9M11 9.1l-.9.9M13.6 9.1l.9.9M14.5 9.1l-.9.9M6.1 12.3h1.8M9.6 12.3h1.8M13.1 12.3h1.8M6.1 14.8h1.8M9.6 14.8h1.8M13.1 14.8h1.8"/>
+                </svg>
+              </button>
+              <input class="native-date-input" type="date" value="${toIsoDateValue(value)}" data-native-date-key="${key}" tabindex="-1" aria-hidden="true" />
+            </div>
+          </div>
+        `;
+      }
+
+      function selectField(label, value, compact = false) {
+        return `
+          <div>
+            <div class="field-label">${label}</div>
+            <div class="field-value selectish ${compact ? "compact" : ""}">
+              <span>${value || "—"}</span>
+              <span class="field-caret"></span>
+            </div>
+          </div>
+        `;
+      }
+
+      function statePickerField(label, value) {
+        return `
+          <div>
+            <div class="field-label">${label}</div>
+            <div class="field-value state-picker-shell field-value selectish compact">
+              <input class="state-picker-input" type="text" list="stateOptions" value="${value || ""}" placeholder="State" data-state-picker="homeState" />
+              <span class="field-caret"></span>
+            </div>
+          </div>
+        `;
+      }
+
+      function toStateCode(value) {
+        if (!value) return "—";
+        if (value.length === 2) return value.toUpperCase();
+        return stateAbbreviations[value] || value;
+      }
+
+      function normalizeStateValue(value) {
+        const trimmed = String(value || "").trim();
+        if (!trimmed) return "";
+        if (trimmed.length === 2) return trimmed.toUpperCase();
+        const exactEntry = Object.entries(stateAbbreviations).find(([state]) => state.toLowerCase() === trimmed.toLowerCase());
+        if (exactEntry) return exactEntry[1];
+        const exactCode = Object.values(stateAbbreviations).find((code) => code.toLowerCase() === trimmed.toLowerCase());
+        if (exactCode) return exactCode;
+        const startsWithEntry = Object.entries(stateAbbreviations).find(([state]) => state.toLowerCase().startsWith(trimmed.toLowerCase()));
+        if (startsWithEntry) return startsWithEntry[1];
+        return trimmed.toUpperCase();
+      }
+
+      function formatShortDate(value) {
+        if (!value) return "—";
+        const slashMatch = String(value).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (slashMatch) {
+          const [, month, day, year] = slashMatch;
+          return `${Number(month)}/${Number(day)}/${year.slice(-2)}`;
+        }
+
+        const parsed = new Date(value);
+        if (!Number.isNaN(parsed.getTime())) {
+          return `${parsed.getMonth() + 1}/${parsed.getDate()}/${String(parsed.getFullYear()).slice(-2)}`;
+        }
+
+        return value;
+      }
+
+      function formatShortDateTime(value) {
+        if (!value) return "—";
+        const match = String(value).match(/^(.+?)\s(\d{1,2}:\d{2}\s?[AP]M)$/i);
+        if (match) {
+          return `${formatShortDate(match[1])} ${match[2].toUpperCase()}`;
+        }
+        return value;
+      }
+
+      function syncInsuredModeToggle(submission) {
+        if (!insuredModeToggle) return;
+        if (submission) {
+          insuredMode = /renew/i.test(submission.subject) ? "renewal" : "new";
+        }
+        insuredModeToggle.querySelectorAll("button").forEach((button) => {
+          button.classList.toggle("active", button.dataset.mode === insuredMode);
+        });
+      }
+
+      function brokerField(label, value, muted = false) {
+        return `
+          <div>
+            <div class="field-label">${label}</div>
+            <div class="field-value ${muted ? "broker-disabled" : ""}">${value || "—"}</div>
+          </div>
+        `;
+      }
+
+      function renderSubmissionList() {
+        if (!submissionList) return;
+        const sorted = getSortedSubmissions();
+        const visibleColumns = getVisibleColumns();
+
+        submissionList.innerHTML = sorted.map((submission) => `
+          <button class="submission-row ${selectedSubmissionIds.has(submission.id) ? "active" : ""}" data-id="${submission.id}" style="grid-template-columns:${getColumnTemplate()};">
+            ${visibleColumns.map((column) => getSubmissionCell(submission, column.key)).join("")}
+          </button>
+        `).join("");
+
+        submissionList.querySelectorAll(".submission-row").forEach((button) => {
+          button.addEventListener("click", (event) => {
+            if (event.shiftKey) {
+              setActiveSubmissionRange(button.dataset.id);
+              return;
+            }
+            if (selectedSubmissionId === button.dataset.id && selectedSubmissionIds.size === 1) {
+              clearActiveSubmission();
+              return;
+            }
+            setActiveSubmission(button.dataset.id);
+          });
+        });
+      }
+
+      function syncSortIcons() {
+        if (!submissionHead) return;
+        submissionHead.querySelectorAll(".sort-button").forEach((button) => {
+          const icon = button.querySelector(".sort-icon");
+          if (!icon) return;
+          icon.className = "sort-icon";
+          if (button.dataset.sort === sortKey) {
+            icon.classList.add(sortDirection === "asc" ? "asc" : "desc");
+          }
+        });
+      }
+
+      function bindSubmissionHeadInteractions() {
+        if (!submissionHead) return;
+
+        submissionHead.querySelectorAll(".col-resizer").forEach((handle) => {
+          handle.addEventListener("pointerdown", (event) => {
+            activeColumnResize = {
+              col: handle.dataset.col,
+              startX: event.clientX,
+              startWidth: handle.parentElement.getBoundingClientRect().width,
+              min: Number(handle.dataset.min || 36)
+            };
+            document.body.style.userSelect = "none";
+            event.preventDefault();
+          });
+        });
+
+        submissionHead.querySelectorAll(".sort-button").forEach((button) => {
+          button.addEventListener("click", () => {
+            const nextKey = button.dataset.sort;
+            if (sortKey === nextKey) {
+              sortDirection = sortDirection === "asc" ? "desc" : "asc";
+            } else {
+              sortKey = nextKey;
+              sortDirection = nextKey === "dateReceived" ? "desc" : "asc";
+            }
+            render();
+          });
+        });
+      }
+
+      function openColumnModal() {
+        if (!columnModal) return;
+        draftColumnConfig = columnConfig.map((column) => ({ ...column }));
+        renderColumnPicker();
+        columnModal.classList.add("open");
+        columnModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeColumnModal() {
+        if (!columnModal) return;
+        columnModal.classList.remove("open");
+        columnModal.setAttribute("aria-hidden", "true");
+      }
+
+      function renderColumnPicker() {
+        if (!columnPickerList || !draftColumnConfig) return;
+        columnPickerList.innerHTML = draftColumnConfig.map((column, index) => `
+          <div class="column-row" draggable="true" data-index="${index}">
+            <div class="column-name-wrap">
+              <div class="drag-handle" aria-hidden="true"></div>
+              <div class="column-name">${column.label}</div>
+            </div>
+            <button class="visibility-toggle ${column.visible ? "" : "off"}" data-toggle-index="${index}" aria-label="Toggle ${column.label}">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="currentColor" d="M9.55 17.45 4.8 12.7l1.4-1.4 3.35 3.35 8.25-8.25 1.4 1.4-9.65 9.65Z"/>
+              </svg>
+            </button>
+          </div>
+        `).join("");
+
+        let dragIndex = null;
+        let dropIndex = null;
+        let dropPlacement = "before";
+
+        const clearDropTargets = () => {
+          columnPickerList.querySelectorAll(".column-row").forEach((item) => {
+            item.classList.remove("drop-target", "drop-before", "drop-after");
+          });
+        };
+
+        columnPickerList.querySelectorAll(".column-row").forEach((row) => {
+          row.addEventListener("dragstart", (event) => {
+            dragIndex = Number(row.dataset.index);
+            row.classList.add("dragging");
+            if (event.dataTransfer) {
+              event.dataTransfer.effectAllowed = "move";
+              event.dataTransfer.setData("text/plain", String(dragIndex));
+            }
+          });
+          row.addEventListener("dragend", () => {
+            dragIndex = null;
+            dropIndex = null;
+            dropPlacement = "before";
+            row.classList.remove("dragging");
+            clearDropTargets();
+          });
+          row.addEventListener("dragover", (event) => {
+            event.preventDefault();
+            if (event.dataTransfer) {
+              event.dataTransfer.dropEffect = "move";
+            }
+            if (dragIndex === null) return;
+            const rect = row.getBoundingClientRect();
+            const isAfter = event.clientY > rect.top + rect.height / 2;
+            dropIndex = Number(row.dataset.index);
+            dropPlacement = isAfter ? "after" : "before";
+            clearDropTargets();
+            row.classList.add("drop-target", isAfter ? "drop-after" : "drop-before");
+          });
+          row.addEventListener("dragenter", (event) => {
+            if (dragIndex === null) return;
+            const rect = row.getBoundingClientRect();
+            const isAfter = event.clientY > rect.top + rect.height / 2;
+            dropIndex = Number(row.dataset.index);
+            dropPlacement = isAfter ? "after" : "before";
+            clearDropTargets();
+            row.classList.add("drop-target", isAfter ? "drop-after" : "drop-before");
+          });
+          row.addEventListener("dragleave", (event) => {
+            const related = event.relatedTarget;
+            if (related && row.contains(related)) return;
+            if (dropIndex === Number(row.dataset.index)) {
+              row.classList.remove("drop-target", "drop-before", "drop-after");
+            }
+          });
+          row.addEventListener("drop", (event) => {
+            event.preventDefault();
+            const transferIndex = event.dataTransfer ? Number(event.dataTransfer.getData("text/plain")) : dragIndex;
+            const sourceIndex = Number.isNaN(transferIndex) ? dragIndex : transferIndex;
+            const targetIndex = dropIndex ?? Number(row.dataset.index);
+            if (sourceIndex === null || targetIndex === null) return;
+            const next = [...draftColumnConfig];
+            const [moved] = next.splice(sourceIndex, 1);
+            let insertIndex = targetIndex;
+            if (dropPlacement === "after") {
+              insertIndex = sourceIndex < targetIndex ? targetIndex : targetIndex + 1;
+            } else if (sourceIndex < targetIndex) {
+              insertIndex = targetIndex - 1;
+            }
+            insertIndex = Math.max(0, Math.min(next.length, insertIndex));
+            next.splice(insertIndex, 0, moved);
+            draftColumnConfig = next;
+            dragIndex = null;
+            dropIndex = null;
+            dropPlacement = "before";
+            renderColumnPicker();
+          });
+        });
+
+        columnPickerList.querySelectorAll(".visibility-toggle").forEach((button) => {
+          button.addEventListener("click", () => {
+            const index = Number(button.dataset.toggleIndex);
+            const visibleCount = draftColumnConfig.filter((column) => column.visible).length;
+            if (draftColumnConfig[index].visible && visibleCount === 1) return;
+            draftColumnConfig[index].visible = !draftColumnConfig[index].visible;
+            renderColumnPicker();
+          });
+        });
+      }
+
+      function renderDocTabs(submission) {
+        if (!docTabs || !docSelect) return;
+        const iconByKey = {
+          email: {
+            className: "email",
+            svg: `
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <rect x="1.5" y="3" width="8.5" height="10" rx="1.6" fill="#2B7DE9"/>
+                <rect x="8.4" y="2" width="6.1" height="12" rx="1.5" fill="#1E5FD6"/>
+                <path d="M3.2 5.1h5.1c.55 0 1 .45 1 1v3.8c0 .55-.45 1-1 1H3.2c-.55 0-1-.45-1-1V6.1c0-.55.45-1 1-1Z" fill="#fff" opacity=".97"/>
+                <path d="M2.7 6.1 5.8 8.3l3.1-2.2" fill="none" stroke="#2B7DE9" stroke-width=".85" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            `
+          },
+          sov: {
+            className: "excel",
+            svg: `
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <rect x="5.7" y="1.7" width="8" height="12.6" rx="1.5" fill="#2E7D32"/>
+                <rect x="2" y="3.1" width="6.5" height="9.8" rx="1.3" fill="#1B5E20"/>
+                <path d="M4.1 5.2 6.3 8 4.1 10.8M6.4 5.2 4.2 8l2.2 2.8" fill="none" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+                <rect x="9.1" y="4.3" width="3.2" height="1" fill="#A5D6A7"/>
+                <rect x="9.1" y="6.3" width="3.2" height="1" fill="#A5D6A7"/>
+                <rect x="9.1" y="8.3" width="3.2" height="1" fill="#A5D6A7"/>
+              </svg>
+            `
+          },
+          acord: {
+            className: "pdf",
+            svg: `
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M4 1.7h5.2l3 3v8.9c0 .94-.76 1.7-1.7 1.7H4c-.94 0-1.7-.76-1.7-1.7V3.4c0-.94.76-1.7 1.7-1.7Z" fill="#C62828"/>
+                <path d="M9.2 1.8v2.3c0 .5.4.9.9.9h2.3" fill="#E57373"/>
+                <path d="M6.2 10.9c1.8-.9 3.1-3.2 3.7-5 .2-.5.4-.9.7-.9.4 0 .7.2.7.6 0 .7-1 1.7-2.1 2.6-.8.7-1.8 1.4-2.9 1.9-.7.4-1.7.8-2.1.3-.3-.4.2-.9.8-1 .5-.2 1.1-.1 1.9 0 1 .2 2 .5 2.9.7 1 .3 1.7.7 2 .2.2-.4-.2-.7-.8-.8-.9-.1-1.9-.1-3 0-1.4.1-2.5.2-3.4.5" fill="none" stroke="#fff" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            `
+          },
+          misc1: {
+            className: "pdf",
+            svg: `
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M4 1.7h5.2l3 3v8.9c0 .94-.76 1.7-1.7 1.7H4c-.94 0-1.7-.76-1.7-1.7V3.4c0-.94.76-1.7 1.7-1.7Z" fill="#C62828"/>
+                <path d="M9.2 1.8v2.3c0 .5.4.9.9.9h2.3" fill="#E57373"/>
+                <path d="M6.2 10.9c1.8-.9 3.1-3.2 3.7-5 .2-.5.4-.9.7-.9.4 0 .7.2.7.6 0 .7-1 1.7-2.1 2.6-.8.7-1.8 1.4-2.9 1.9-.7.4-1.7.8-2.1.3-.3-.4.2-.9.8-1 .5-.2 1.1-.1 1.9 0 1 .2 2 .5 2.9.7 1 .3 1.7.7 2 .2.2-.4-.2-.7-.8-.8-.9-.1-1.9-.1-3 0-1.4.1-2.5.2-3.4.5" fill="none" stroke="#fff" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            `
+          },
+          misc2: {
+            className: "pdf",
+            svg: `
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M4 1.7h5.2l3 3v8.9c0 .94-.76 1.7-1.7 1.7H4c-.94 0-1.7-.76-1.7-1.7V3.4c0-.94.76-1.7 1.7-1.7Z" fill="#C62828"/>
+                <path d="M9.2 1.8v2.3c0 .5.4.9.9.9h2.3" fill="#E57373"/>
+                <path d="M6.2 10.9c1.8-.9 3.1-3.2 3.7-5 .2-.5.4-.9.7-.9.4 0 .7.2.7.6 0 .7-1 1.7-2.1 2.6-.8.7-1.8 1.4-2.9 1.9-.7.4-1.7.8-2.1.3-.3-.4.2-.9.8-1 .5-.2 1.1-.1 1.9 0 1 .2 2 .5 2.9.7 1 .3 1.7.7 2 .2.2-.4-.2-.7-.8-.8-.9-.1-1.9-.1-3 0-1.4.1-2.5.2-3.4.5" fill="none" stroke="#fff" stroke-width=".8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            `
+          }
+        };
+
+        docTabs.innerHTML = attachmentOrder.map((key) => `
+          <button class="doc-tab ${key === selectedAttachment ? "active" : ""}" data-key="${key}">
+            <span class="doc-glyph ${iconByKey[key].className}">${iconByKey[key].svg}</span>
+            <span>${submission.attachments[key]}</span>
+          </button>
+        `).join("");
+
+        docTabs.querySelectorAll(".doc-tab").forEach((button) => {
+          button.addEventListener("click", () => {
+            setPreviewAttachment(button.dataset.key);
+          });
+        });
+
+        docSelect.innerHTML = attachmentOrder.map((key) => `
+          <option value="${key}" ${key === selectedAttachment ? "selected" : ""}>${submission.attachments[key]}</option>
+        `).join("");
+
+        docSelect.onchange = (event) => {
+          setPreviewAttachment(event.target.value);
+        };
+      }
+
+      function renderAcord(submission) {
+        return `
+          <div class="viewer-shell">
+            <div class="preview-image-wrap">
+              <img
+                class="preview-image"
+                src="/preview-assets/23_24_CPRP_Collingwood_Gardens_apps_3_0.pdf.png"
+                alt="ACORD PDF preview"
+              />
+            </div>
+          </div>
+        `;
+      }
+
+      function renderEmail(submission) {
+        return `
+          <div class="viewer-shell">
+            <div class="doc">
+              <div class="mail-head">
+                <div class="mail-subject">${submission.email.subject}</div>
+                <div class="mail-meta">
+                  <div class="mail-meta-item"><span class="mail-meta-label">From:</span> ${submission.email.from}</div>
+                  <div class="mail-meta-item"><span class="mail-meta-label">To:</span> ${submission.email.to}</div>
+                  <div class="mail-meta-item"><span class="mail-meta-label">Cc:</span> ${submission.email.cc}</div>
+                  <div class="mail-meta-item"><span class="mail-meta-label stack"><span>Broker</span><span class="subline">Company</span></span> ${submission.brokerDetails.brokerCompany}</div>
+                  <div class="mail-meta-item"><span class="mail-meta-label">Received:</span> ${submission.email.received}</div>
+                </div>
+              </div>
+              <div class="mail-body">
+                ${submission.email.bodyIntro.map((paragraph) => `<p>${paragraph}</p>`).join("")}
+                <div class="mail-callout">
+                  <div class="mini-kicker">Attachments</div>
+                  <ul style="margin:0;padding-left:18px;">
+                    ${submission.email.bullets.map((item) => `<li>${item}</li>`).join("")}
+                  </ul>
+                </div>
+                <div class="embed">
+                  <div class="mini-kicker" style="color:#c24d1e;">Embedded ACORD Snapshot</div>
+                  <div class="preview-image-wrap" style="height:auto;max-height:none;">
+                    <img
+                      class="preview-image"
+                      src="/preview-assets/23_24_CPRP_Collingwood_Gardens_apps_3_0.pdf.png"
+                      alt="Embedded ACORD preview"
+                    />
+                  </div>
+                </div>
+                <p>Thanks,</p>
+                <p>${submission.sender}<br />${submission.brokerDetails.brokerCompany}<br />${submission.senderEmail}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderSov(submission, title) {
+        return `
+          <div class="viewer-shell">
+            <div class="preview-image-wrap">
+              <img
+                class="preview-image"
+                src="/preview-assets/AAA Test Certified.XLSX.png"
+                alt="${title} preview"
+              />
+            </div>
+          </div>
+        `;
+      }
+
+      function renderSupplement(submission, title) {
+        const propertySection = title === "Property Section";
+        return `
+          <div class="viewer-shell">
+            <div class="doc">
+              <div class="mail-head">
+                <div class="mail-subject">${title}</div>
+                <div class="mail-meta">
+                  <div><strong style="color:#334155;">Submission:</strong> ${submission.subject}</div>
+                  <div><strong style="color:#334155;">Insured:</strong> ${submission.insured}</div>
+                </div>
+              </div>
+              <div class="mail-body">
+                <div class="mail-callout">
+                  <div class="mini-kicker">Summary</div>
+                  ${propertySection ? "Pulled from the ACORD 140 property section in the sample packet." : submission.submissionDetails.recommendation}
+                </div>
+                ${
+                  propertySection
+                    ? `
+                      <div class="note"><strong>Premises #1:</strong> 838 Greens Road, Houston, TX 77060</div>
+                      <div class="note"><strong>Coverage:</strong> Special including theft, Blanket Building $14,927,976, BI with Extra Expense and Rental Value $2,100,000, Blanket BPP $25,000, Excess Flood $1,000,000.</div>
+                      <div class="note"><strong>Construction:</strong> Frame, 1 story, year built 1980, total area 138,222, roof type composition.</div>
+                      <div class="note"><strong>Deductible / options:</strong> AOP $50K, Named Storm 3% / $50K minimum shown in the packet.</div>
+                    `
+                    : submission.notes.map((note) => `<div class="note">${note}</div>`).join("")
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderPreview(submission) {
+        if (selectedAttachment === "email") return renderEmail(submission);
+        if (selectedAttachment === "acord") return renderAcord(submission);
+        if (selectedAttachment === "sov") return renderSov(submission, submission.attachments.sov);
+        return renderSupplement(submission, submission.attachments[selectedAttachment]);
+      }
+
+      function renderLeftPanels(submission) {
+        if (!submission) {
+          if (triageStatus) {
+            triageStatus.className = "pill";
+            triageStatus.textContent = "";
+          }
+          if (insuredFields) insuredFields.innerHTML = "";
+          if (insuredDescription) insuredDescription.textContent = "";
+          if (submissionFields) submissionFields.innerHTML = "";
+          if (brokerFields) brokerFields.innerHTML = "";
+          if (notesList) notesList.innerHTML = "";
+          if (recommendation) recommendation.textContent = "";
+          return;
+        }
+        syncInsuredModeToggle(submission);
+
+        if (triageStatus) {
+          triageStatus.className = `pill ${statusClass(submission.triage)}`;
+          triageStatus.textContent = submission.triage;
+        }
+
+        if (insuredFields) {
+          insuredFields.classList.add("insured-grid");
+          insuredFields.innerHTML = [
+            `<div class="field-span-wide">${field("Insured", submission.insured)}</div>`,
+            statePickerField("Home State", toStateCode(submission.insuredDetails.homeState)),
+            field("Address 1", submission.insuredDetails.address1),
+            field("Address 2", submission.insuredDetails.address2 || "—"),
+            field("City", submission.insuredDetails.city),
+            field("State", submission.insuredDetails.state),
+            field("Zip", submission.insuredDetails.zip),
+            field("FEIN", submission.insuredDetails.fein),
+            field("NAICS", submission.insuredDetails.naics),
+            field("OFAC", submission.insuredDetails.ofac)
+          ].join("");
+
+          insuredFields.querySelectorAll(".state-picker-input").forEach((input) => {
+            const commitState = () => {
+              const nextValue = normalizeStateValue(input.value);
+              if (!nextValue) return;
+              submission.insuredDetails.homeState = nextValue;
+              input.value = nextValue;
+            };
+            input.addEventListener("blur", commitState);
+            input.addEventListener("change", commitState);
+            input.addEventListener("keydown", (event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                input.blur();
+              }
+            });
+          });
+        }
+        if (insuredDescription) {
+          insuredDescription.textContent = submission.insuredDetails.description;
+        }
+
+        if (submissionFields) {
+          submissionFields.innerHTML = [
+            dateField("Incept", submission.submissionDetails.incept, "incept"),
+            dateField("Expiry", submission.submissionDetails.expiry, "expiry"),
+            dateField("Need By", submission.submissionDetails.needBy, "needBy"),
+            field("Client Reference", submission.submissionDetails.clientReference),
+            field("Date Received", formatShortDateTime(submission.submissionDetails.dateReceived)),
+            field("TIV", submission.tiv),
+            field("Blocking Company", submission.submissionDetails.blockingCompany),
+            field("Blocking Broker", submission.submissionDetails.blockingBroker),
+            field("Blocking Sub ID", submission.submissionDetails.blockingSubId),
+            field("Priority", submission.priority)
+          ].join("");
+
+          submissionFields.querySelectorAll(".date-picker-btn").forEach((button) => {
+            button.addEventListener("click", () => {
+              const key = button.dataset.dateButton;
+              const nativeInput = submissionFields.querySelector(`[data-native-date-key="${key}"]`);
+              if (!nativeInput) return;
+              if (typeof nativeInput.showPicker === "function") {
+                nativeInput.showPicker();
+              } else {
+                nativeInput.focus();
+                nativeInput.click();
+              }
+            });
+          });
+
+          submissionFields.querySelectorAll(".native-date-input").forEach((input) => {
+            input.addEventListener("change", () => {
+              if (!input.value) return;
+              submission.submissionDetails[input.dataset.nativeDateKey] = normalizeDateValue(input.value);
+              renderLeftPanels(submission);
+            });
+          });
+
+          submissionFields.querySelectorAll(".date-field-input").forEach((input) => {
+            const commitValue = () => {
+              const nextValue = input.value.trim();
+              if (!nextValue) return;
+              submission.submissionDetails[input.dataset.dateKey] = normalizeDateValue(nextValue);
+              renderLeftPanels(submission);
+            };
+            input.addEventListener("blur", commitValue);
+            input.addEventListener("keydown", (event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                input.blur();
+              }
+            });
+          });
+        }
+
+        if (brokerFields) {
+          brokerFields.innerHTML = [
+            brokerField("Broker Company", submission.brokerDetails.brokerCompany),
+            brokerField("Broker", submission.brokerDetails.broker, true),
+            brokerField("Assistant", submission.brokerDetails.assistant, true),
+            brokerField("Email Sender", submission.brokerDetails.emailSender, true),
+            brokerField("Requested UW", submission.brokerDetails.requestedUw),
+            brokerField("Sender", submission.sender)
+          ].join("");
+        }
+
+        if (notesList) {
+          notesList.innerHTML = submission.notes.map((note) => `<div class="note">${note}</div>`).join("");
+        }
+        if (recommendation) {
+          recommendation.textContent = submission.submissionDetails.recommendation;
+        }
+      }
+
+      function renderPreviewPanels(submission) {
+        if (!previewArea || !previewTitle || !docTabs || !docSelect) return;
+        if (!submission) {
+          docTabs.innerHTML = "";
+          docSelect.innerHTML = "";
+          previewTitle.textContent = "";
+          previewArea.innerHTML = "";
+          return;
+        }
+        renderDocTabs(submission);
+        previewTitle.textContent = submission.attachments[selectedAttachment];
+        previewArea.innerHTML = renderPreview(submission);
+      }
+
+      function render() {
+        const leftSubmission = getLeftPanelSubmission();
+        const rightSubmission = getSelectedSubmission();
+        renderSubmissionHead();
+        syncSortIcons();
+        bindSubmissionHeadInteractions();
+        renderSubmissionList();
+        renderLeftPanels(leftSubmission);
+        renderPreviewPanels(rightSubmission);
+      }
+
+      const tray = document.getElementById("tray");
+      const traySub = document.getElementById("traySub");
+      const trayBody = document.getElementById("trayBody");
+      const headerBrand = document.getElementById("headerBrand");
+      const edgeToggle = document.getElementById("edgeToggle");
+
+      function syncTrayState() {
+        if (!tray || !headerBrand || !edgeToggle) return;
+        const closed = tray.classList.contains("closed");
+        headerBrand.classList.toggle("hidden", !closed);
+        edgeToggle.classList.add("visible");
+        edgeToggle.textContent = closed ? "›" : "‹";
+      }
+
+      if (edgeToggle && tray) {
+        edgeToggle.addEventListener("click", () => {
+          tray.classList.toggle("closed");
+          syncTrayState();
+        });
+      }
+
+      const submissionTable = document.querySelector(".submission-table");
+      const submissionListEl = document.getElementById("submissionList");
+      const resizeHandle = document.getElementById("resizeHandle");
+      let resizing = false;
+      let detailResizing = false;
+      let activeColumnResize = null;
+
+      if (submissionListEl) {
+        submissionListEl.style.height = "150px";
+      }
+
+      if (resizeHandle) {
+        resizeHandle.addEventListener("pointerdown", () => {
+          resizing = true;
+          document.body.style.userSelect = "none";
+        });
+      }
+
+      window.addEventListener("pointermove", (event) => {
+        if (!resizing) return;
+        const rect = submissionTable.getBoundingClientRect();
+        const next = Math.max(100, Math.min(window.innerHeight - 420, event.clientY - rect.top - 41));
+        submissionListEl.style.height = `${next}px`;
+      });
+
+      window.addEventListener("pointerup", () => {
+        resizing = false;
+        detailResizing = false;
+        activeColumnResize = null;
+        document.body.style.userSelect = "";
+      });
+
+      window.addEventListener("keydown", (event) => {
+        const tagName = document.activeElement?.tagName;
+        if (tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT") return;
+        if (!selectedSubmissionId) return;
+        if (event.key === "ArrowDown") {
+          event.preventDefault();
+          moveActiveSubmission(1);
+        } else if (event.key === "ArrowUp") {
+          event.preventDefault();
+          moveActiveSubmission(-1);
+        }
+      });
+
+      function applyDensity() {
+        const step = densitySteps[densityIndex];
+        document.documentElement.style.setProperty("--submission-row-pad", `${step.pad}px`);
+        document.documentElement.style.setProperty("--submission-row-font", `${step.font}px`);
+        document.documentElement.style.setProperty("--submission-meta-font", `${step.meta}px`);
+        document.documentElement.style.setProperty("--detail-title-font", `${step.detailTitle}px`);
+        document.documentElement.style.setProperty("--detail-label-font", `${step.detailLabel}px`);
+        document.documentElement.style.setProperty("--detail-value-font", `${step.detailValue}px`);
+        document.documentElement.style.setProperty("--detail-note-font", `${step.detailNote}px`);
+        document.documentElement.style.setProperty("--detail-pill-font", `${step.detailPill}px`);
+        document.documentElement.style.setProperty("--detail-field-pad-y", `${step.fieldPadY}px`);
+        document.documentElement.style.setProperty("--detail-field-pad-x", `${step.fieldPadX}px`);
+        document.documentElement.style.setProperty("--detail-textarea-pad-y", `${step.textareaPadY}px`);
+        document.documentElement.style.setProperty("--detail-textarea-pad-x", `${step.textareaPadX}px`);
+      }
+
+      if (densityDown) {
+        densityDown.addEventListener("click", () => {
+          densityIndex = Math.max(0, densityIndex - 1);
+          applyDensity();
+        });
+      }
+
+      if (densityUp) {
+        densityUp.addEventListener("click", () => {
+          densityIndex = Math.min(densitySteps.length - 1, densityIndex + 1);
+          applyDensity();
+        });
+      }
+
+      if (detailResizeHandle) {
+        detailResizeHandle.addEventListener("pointerdown", () => {
+          detailResizing = true;
+          document.body.style.userSelect = "none";
+        });
+      }
+
+      window.addEventListener("pointermove", (event) => {
+        if (!detailResizing) return;
+        const details = document.querySelector(".details-grid");
+        const rect = details.getBoundingClientRect();
+        const ratio = ((event.clientY - rect.top) / rect.height) * 100;
+        const clamped = Math.max(46, Math.min(78, ratio));
+        document.documentElement.style.setProperty("--lower-top-row", `${clamped}%`);
+      });
+
+      if (insuredModeToggle) {
+        insuredModeToggle.querySelectorAll("button").forEach((button) => {
+          button.addEventListener("click", () => {
+            insuredMode = button.dataset.mode || "new";
+            syncInsuredModeToggle();
+          });
+        });
+      }
+
+      if (columnSettingsBtn) {
+        columnSettingsBtn.addEventListener("click", openColumnModal);
+      }
+
+      if (columnModalClose) {
+        columnModalClose.addEventListener("click", closeColumnModal);
+      }
+
+      if (columnCancelBtn) {
+        columnCancelBtn.addEventListener("click", closeColumnModal);
+      }
+
+      if (columnResetBtn) {
+        columnResetBtn.addEventListener("click", () => {
+          draftColumnConfig = defaultColumns.map((column) => ({ ...column }));
+          renderColumnPicker();
+        });
+      }
+
+      if (columnSaveBtn) {
+        columnSaveBtn.addEventListener("click", () => {
+          if (draftColumnConfig) {
+            columnConfig = draftColumnConfig.map((column) => ({ ...column }));
+            render();
+          }
+          closeColumnModal();
+        });
+      }
+
+      if (columnModal) {
+        columnModal.addEventListener("click", (event) => {
+          if (event.target === columnModal) {
+            closeColumnModal();
+          }
+        });
+      }
+
+      window.addEventListener("pointermove", (event) => {
+        if (!activeColumnResize) return;
+        const delta = event.clientX - activeColumnResize.startX;
+        const next = Math.max(activeColumnResize.min || 36, activeColumnResize.startWidth + delta);
+        document.documentElement.style.setProperty(`--col-${activeColumnResize.col}`, `${next}px`);
+      });
+
+      applyDensity();
+      syncTrayState();
+      render();
+      window.addEventListener("DOMContentLoaded", render);
+      window.addEventListener("load", render);
+    </script>
+  </body>
+</html>
