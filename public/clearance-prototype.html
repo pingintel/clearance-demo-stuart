@@ -111,12 +111,15 @@
       }
 
       .brand {
-        font-size: 22px;
-        font-weight: 900;
-        letter-spacing: -0.06em;
-        text-transform: uppercase;
-        color: var(--brand);
         flex-shrink: 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .brand-logo {
+        height: 30px;
+        width: auto;
+        display: block;
       }
 
       .brand-sub {
@@ -130,6 +133,69 @@
         background: transparent;
         color: var(--muted);
         cursor: pointer;
+      }
+
+      .tray-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .tray-nav-section {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .tray-nav-heading {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6366f1;
+        padding: 6px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .tray-nav-chevron {
+        font-size: 14px;
+        color: #8a93a3;
+      }
+
+      .tray-nav-item {
+        font-size: 14px;
+        color: #2a2f39;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .tray-nav-item:hover {
+        background: #f1f5f9;
+      }
+
+      .tray-nav-item.active {
+        background: #fff;
+        font-weight: 600;
+        box-shadow: 0 1px 3px rgba(15,23,42,0.06);
+      }
+
+      .tray-nav-badge {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        background: #f1f5f9;
+        border-radius: 10px;
+        padding: 1px 8px;
+        min-width: 20px;
+        text-align: center;
+      }
+
+      .tray-nav-item.active .tray-nav-badge {
+        background: #e8f5e9;
+        color: #217346;
       }
 
       .tray-body {
@@ -190,12 +256,11 @@
 
       .edge-toggle {
         position: fixed;
-        top: 50vh;
         left: 0;
         transform: translate(-18%, -50%);
-        width: 30px;
-        height: 96px;
-        border-radius: 16px;
+        width: 22px;
+        height: 44px;
+        border-radius: 10px;
         border: 1px solid var(--line-strong);
         background: #fff;
         color: var(--muted);
@@ -204,7 +269,7 @@
         box-shadow: var(--shadow);
         cursor: pointer;
         z-index: 25;
-        font-size: 18px;
+        font-size: 13px;
         font-weight: 700;
       }
 
@@ -288,6 +353,72 @@
       .action-btn.compact:hover {
         font-size: 11px;
         font-weight: 600;
+      }
+
+      .action-btn.btn-clear {
+        background: #217346;
+        border-color: #217346;
+        color: #fff;
+      }
+
+      .action-btn.btn-clear:hover {
+        background: #1a5c38;
+        border-color: #1a5c38;
+      }
+
+      .action-btn.btn-block {
+        background: #f59e0b;
+        border-color: #f59e0b;
+        color: #fff;
+      }
+
+      .action-btn.btn-block:hover {
+        background: #d97706;
+        border-color: #d97706;
+      }
+
+      .action-btn.btn-decline {
+        background: #dc2626;
+        border-color: #dc2626;
+        color: #fff;
+      }
+
+      .action-btn.btn-decline:hover {
+        background: #b91c1c;
+        border-color: #b91c1c;
+      }
+
+      .action-btn.btn-delete {
+        text-decoration: line-through;
+      }
+
+      .action-btn.btn-scrub {
+        background: #6366f1;
+        border-color: #6366f1;
+        color: #fff;
+      }
+
+      .action-btn.btn-scrub:hover {
+        background: #4f46e5;
+        border-color: #4f46e5;
+      }
+
+      .action-btn.btn-clearance {
+        background: #217346;
+        border-color: #217346;
+        color: #fff;
+      }
+
+      .scrub-insured-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: #2a2f39;
+        margin-left: 8px;
+      }
+
+      .action-btn.btn-clearance:hover {
+        background: #1a5c38;
+        border-color: #1a5c38;
       }
 
       .icon-btn {
@@ -785,7 +916,7 @@
         min-height: 0;
         flex: 0 0 auto;
         overflow: visible;
-        padding: 0 3px 2px;
+        padding: 0 3px 14px;
         background: #fff;
       }
 
@@ -891,6 +1022,34 @@
         box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
       }
 
+      .segmented-field {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
+        border-radius: 10px;
+        background: #d8e0ee;
+        padding: 2px;
+        width: 100%;
+      }
+
+      .segmented-field button {
+        flex: 1;
+        border: 0;
+        background: transparent;
+        color: #39414d;
+        font-size: var(--detail-value-font);
+        padding: var(--detail-field-pad-y) var(--detail-field-pad-x);
+        border-radius: 8px;
+        cursor: pointer;
+        line-height: 1.3;
+      }
+
+      .segmented-field button.active {
+        background: #fff;
+        color: #171b24;
+        box-shadow: 0 1px 0 rgba(255,255,255,0.9) inset;
+      }
+
       .recommendation-label {
         font-size: var(--detail-label-font);
         font-weight: 500;
@@ -951,6 +1110,29 @@
         line-height: 1.3;
         color: #1e2430;
         background: #fff;
+      }
+
+      .inline-edit {
+        all: unset;
+        width: 100%;
+        font: inherit;
+        color: inherit;
+        line-height: inherit;
+      }
+
+      .inline-edit:focus {
+        outline: none;
+      }
+
+      .field-value:has(.inline-edit:focus) {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
+      }
+
+      .textarea[contenteditable]:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
+        outline: none;
       }
 
       .field-value.selectish {
@@ -1040,6 +1222,55 @@
         color: #8a93a3;
       }
 
+      .state-picker-shell {
+        position: relative;
+      }
+
+      .state-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: -1px;
+        right: -1px;
+        max-height: 280px;
+        overflow: auto;
+        background: #fff;
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        box-shadow: 0 6px 16px rgba(15,23,42,0.10);
+        z-index: 50;
+        padding: 4px 0;
+      }
+
+      .state-dropdown.open {
+        display: block;
+      }
+
+      .state-dropdown-item {
+        padding: 6px 12px;
+        font-size: var(--detail-value-font);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .state-dropdown-item:hover,
+      .state-dropdown-item.highlighted {
+        background: #f1f5f9;
+      }
+
+      .state-dropdown-item .state-code {
+        color: #8a93a3;
+        font-size: 0.9em;
+      }
+
+      .state-dropdown-empty {
+        padding: 8px 12px;
+        color: #8a93a3;
+        font-size: var(--detail-value-font);
+      }
+
       .field-caret {
         width: 0;
         height: 0;
@@ -1057,6 +1288,7 @@
         line-height: 1.35;
         color: #1e2430;
         background: #fff;
+        min-height: 6em;
       }
 
       .stack {
@@ -1071,6 +1303,39 @@
         color: #2f3641;
         font-size: var(--detail-note-font);
         line-height: 1.35;
+      }
+
+      .add-note-btn {
+        border: none;
+        background: transparent;
+        color: #454c59;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .add-note-btn:hover {
+        color: #171b24;
+      }
+
+      .note-input {
+        width: 100%;
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 14px;
+        font-family: inherit;
+        line-height: 1.4;
+        resize: vertical;
+        outline: none;
+        color: #1e2430;
+      }
+
+      .note-input:focus {
+        border-color: #6366f1;
+        box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
       }
 
       .broker-disabled {
@@ -1147,13 +1412,10 @@
 
       .preview-area {
         min-height: 0;
-        flex: 1;
-        overflow: auto;
+        flex: 1 1 0;
+        overflow-y: auto;
         padding: 6px;
         background: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
 
       .download-btn {
@@ -1179,11 +1441,7 @@
 
       .viewer-shell {
         width: 100%;
-        height: 100%;
         min-height: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
 
       .doc {
@@ -1206,8 +1464,7 @@
 
       .preview-page {
         width: min(100%, 760px);
-        aspect-ratio: 0.77;
-        max-height: 100%;
+        margin: auto;
         background: #fff;
         border: 1px solid var(--line-strong);
         border-radius: 12px;
@@ -1219,18 +1476,11 @@
 
       .preview-image-wrap {
         width: 100%;
-        height: 100%;
-        max-height: 100%;
-        min-height: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
 
       .preview-image {
         max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+        display: block;
         border-radius: 8px;
         box-shadow: 0 1px 3px rgba(27, 32, 61, 0.04);
         border: 1px solid var(--line-strong);
@@ -1538,6 +1788,269 @@
         font-size: 10px;
       }
 
+      #scrubContent {
+        padding: 6px 6px 14px;
+        overflow: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        max-width: 700px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      .scrub-two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+      }
+
+      .scrub-field-grid {
+        display: grid;
+        gap: 3px;
+        grid-template-columns: 1fr;
+      }
+
+      .scrub-field-grid > div {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .scrub-field-grid > div > .field-label {
+        margin: 0;
+        padding: 0;
+      }
+
+      .scrub-field-grid > div > .field-value,
+      .scrub-field-grid > div > .segmented-field {
+        padding: 4px 8px;
+      }
+
+      .scrub-narrow > div {
+        grid-template-columns: 1fr 100px 100px !important;
+      }
+
+      .scrub-narrow .segmented-field {
+        padding: 1px;
+        height: 100%;
+        box-sizing: border-box;
+      }
+
+      .scrub-narrow .segmented-field button {
+        padding: 2px 8px;
+        font-size: 11px;
+      }
+
+      .bldg-pill.orig-showing,
+      .bldg-pill.orig-hidden {
+        width: 80px;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .bldg-pill.orig-showing {
+        background: #fff;
+        border-color: #ef4444;
+        color: #ef4444;
+      }
+
+      .bldg-pill.orig-showing:hover {
+        background: #fff;
+        color: #ef4444;
+      }
+
+      .bldg-pill.orig-hidden {
+        background: #ef4444;
+        border-color: #ef4444;
+        color: #fff;
+      }
+
+      .bldg-pill.orig-hidden:hover {
+        background: #ef4444;
+        color: #fff;
+      }
+
+      .btn-complete {
+        background: #fff;
+        border-color: #217346;
+        color: #217346;
+        font-size: 10px !important;
+        font-weight: 600 !important;
+      }
+
+      .btn-complete:hover {
+        font-size: 10px !important;
+        font-weight: 600 !important;
+      }
+
+      .btn-complete:focus {
+        background: #217346;
+        border-color: #217346;
+        color: #fff;
+        font-size: 10px !important;
+        font-weight: 600 !important;
+        outline: 2px solid #217346;
+        outline-offset: 1px;
+      }
+
+      .orig-inline {
+        border-color: #ef4444 !important;
+      }
+
+      .orig-inline input {
+        color: #80899a;
+      }
+
+      .scrub-narrow > .no-orig {
+        grid-template-columns: 1fr 100px !important;
+      }
+
+      #scrubContent.hide-orig .orig-field,
+      #scrubContent.hide-orig .orig-inline {
+        display: none !important;
+      }
+
+      #scrubContent.hide-orig .scrub-narrow > div {
+        grid-template-columns: 1fr 100px !important;
+      }
+
+      .bldg-pills {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .bldg-pill {
+        border: 1px solid var(--line-strong);
+        background: #fff;
+        color: #5d6677;
+        font-size: 10px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 12px;
+        cursor: pointer;
+      }
+
+      .bldg-pill.active {
+        background: #217346;
+        border-color: #217346;
+        color: #fff;
+      }
+
+      .bldg-pill:hover:not(.active) {
+        background: #f1f5f9;
+      }
+
+      .scrub-maps-btn {
+        vertical-align: middle;
+        margin-left: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border: 1px solid var(--line-strong);
+        background: #fff;
+        border-radius: 12px;
+        padding: 3px 10px;
+        font-size: 10px;
+        font-weight: 600;
+        color: #5d6677;
+        cursor: pointer;
+      }
+
+      .scrub-maps-btn:hover {
+        background: #f1f5f9;
+      }
+
+      .scrub-rooftop-pill {
+        display: inline-flex;
+        align-items: center;
+        font-size: 10px;
+        font-weight: 600;
+        color: #217346;
+        background: #e8f5e9;
+        border: 1px solid #c8e6c9;
+        border-radius: 12px;
+        padding: 3px 10px;
+        margin-left: 6px;
+        vertical-align: middle;
+      }
+
+      .scrub-maps-btn.active {
+        background: #dc2626;
+        border-color: #dc2626;
+        color: #fff;
+      }
+
+      .scrub-state-zip {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .scrub-state-zip-fields {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      .scrub-state-zip-fields .field-value {
+        width: 50px;
+        padding: 4px 8px;
+      }
+
+      .scrub-state-zip-fields .scrub-zip-label {
+        font-size: var(--detail-label-font);
+        font-weight: 600;
+        color: #2a2f39;
+      }
+
+      .scrub-state-zip-fields .scrub-zip .field-value {
+        width: 70px;
+      }
+
+      .scrub-two-col .detail-card {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .scrub-two-col .scrub-field-grid {
+        gap: 3px;
+      }
+
+      .scrub-section-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #2a2f39;
+        padding: 4px 0 2px;
+      }
+
+      .scrub-annotation {
+        font-size: 9px;
+        font-weight: 500;
+        color: #8a93a3;
+        margin-left: 4px;
+      }
+
+      input.inline-edit[readonly] {
+        cursor: default;
+        color: #80899a;
+      }
+
+      .orig-field .field-value {
+        border-color: #ef4444;
+      }
+
+      .orig-field .field-label {
+        color: #ef4444;
+        font-size: 9px;
+      }
+
       .hidden {
         display: none !important;
       }
@@ -1718,12 +2231,14 @@
 
       .column-row.drop-before {
         padding-top: 34px;
-        box-shadow: inset 0 1px 0 #ff6224;
+        border-top: 3px solid #ff6224;
+        background: linear-gradient(180deg, rgba(255,98,36,0.10) 0%, transparent 40%);
       }
 
       .column-row.drop-after {
         padding-bottom: 34px;
-        box-shadow: inset 0 -1px 0 #ff6224;
+        border-bottom: 3px solid #ff6224;
+        background: linear-gradient(0deg, rgba(255,98,36,0.10) 0%, transparent 40%);
       }
 
       .secondary-btn {
@@ -1783,30 +2298,29 @@
       <aside class="tray" id="tray">
         <div class="tray-header">
           <div class="brand-wrap">
-            <div class="brand">Ping</div>
+            <div class="brand"><img src="/ping-logo.png" alt="Ping" class="brand-logo" /></div>
             <div class="brand-sub" id="traySub">Ping Ops</div>
           </div>
         </div>
         <div class="tray-body" id="trayBody">
-          <div class="tray-stack">
-            <div class="tray-card">
-              <div class="tray-glyph">⌂</div>
-              <div>
-                <div style="font-weight:700;">Submission Portal</div>
-                <div style="font-size:12px;color:#64748b;">Pinned workspace</div>
-              </div>
+          <nav class="tray-nav">
+            <div class="tray-nav-section">
+              <div class="tray-nav-heading">Submissions <span class="tray-nav-chevron">‹</span></div>
+              <div class="tray-nav-item active">Inbox <span class="tray-nav-badge" id="inboxCount">30</span></div>
+              <div class="tray-nav-item">Assigned <span class="tray-nav-badge">18</span></div>
+              <div class="tray-nav-item">In Progress <span class="tray-nav-badge">4</span></div>
+              <div class="tray-nav-item">On Hold <span class="tray-nav-badge">0</span></div>
+              <div class="tray-nav-item">Completed <span class="tray-nav-badge" id="completedCount">0</span></div>
+              <div class="tray-nav-item">Closed</div>
+              <div class="tray-nav-item">All</div>
+              <div class="tray-nav-item">Users and Teams</div>
             </div>
-            <div class="tray-stat">
-              <div class="tray-stat-title">Queue</div>
-              <div style="font-weight:700;">4 active submissions</div>
-              <div style="font-size:12px;color:#64748b;margin-top:4px;">1 blocked, 2 review, 1 clear</div>
+            <div class="tray-nav-section">
+              <div class="tray-nav-heading">Admin <span class="tray-nav-chevron">‹</span></div>
+              <div class="tray-nav-item">Queue Monitor</div>
+              <div class="tray-nav-item">Personal API Keys</div>
             </div>
-            <div class="tray-stat">
-              <div class="tray-stat-title">Targets</div>
-              <div style="font-weight:700;">2 same-day requests</div>
-              <div style="font-size:12px;color:#64748b;margin-top:4px;">Prioritize before noon</div>
-            </div>
-          </div>
+          </nav>
         </div>
       </aside>
 
@@ -1869,7 +2383,7 @@
           <div class="title-wrap">
             <div class="brand hidden" id="headerBrand">Ping</div>
             <div>
-              <h1 class="title">Clearance</h1>
+              <h1 class="title">Ingestion</h1>
             </div>
           </div>
           <div class="actions">
@@ -1889,11 +2403,12 @@
                 </button>
               </div>
               <div class="submission-actions">
-                <button class="action-btn compact">Clear</button>
-                <button class="action-btn compact">Reply</button>
-                <button class="action-btn compact">Block</button>
-                <button class="action-btn compact">Decline</button>
-                <button class="action-btn compact">Delete</button>
+                <button class="action-btn compact btn-clear" id="mainCompleteBtn">Complete</button>
+                <button class="action-btn compact btn-scrub" id="scrubBtn">Scrub</button>
+              </div>
+              <div class="submission-actions scrub-actions hidden" id="scrubActions">
+                <button class="action-btn compact btn-clearance" id="clearanceBtn">Clearance</button>
+                <span class="scrub-insured-name" id="scrubInsuredName"></span>
               </div>
               <div class="zoom-tools">
                 <span class="zoom-label">Zoom</span>
@@ -1940,7 +2455,7 @@
                       <div class="field-grid" id="insuredFields"></div>
                       <div style="margin-top:8px;">
                         <div class="field-label">Description of Operations</div>
-                        <div class="textarea" id="insuredDescription"></div>
+                        <div class="textarea" id="insuredDescription" contenteditable="true"></div>
                       </div>
                     </div>
                     <div class="detail-handle">
@@ -1953,6 +2468,7 @@
                     <div class="card detail-card">
                       <div class="card-title">
                         <h3>Notes</h3>
+                        <button class="add-note-btn" id="addNoteBtn" title="Add a note" aria-label="Add note">+</button>
                       </div>
                       <div class="stack" id="notesList"></div>
                     </div>
@@ -1968,7 +2484,6 @@
                         </div>
                       </div>
                       <div class="field-grid" id="submissionFields"></div>
-                      <div style="margin-top:8px;" class="summary" id="recommendation"></div>
                     </div>
                     <div></div>
                     <div class="card detail-card">
@@ -1980,13 +2495,16 @@
                   </div>
                 </div>
               </div>
+
+              <div id="scrubContent" class="hidden"></div>
+
             </div>
           </section>
 
           <section class="right">
             <div class="toolbar">
               <div class="toolbar-left" id="docTabs"></div>
-              <div class="toolbar-right">
+              <div class="toolbar-right" id="toolbarRight">
                 <div class="preview-title" id="previewTitle"></div>
                 <select id="docSelect" style="padding:5px 8px;border-radius:10px;border:1px solid #dbe3ee;font-size:11px;"></select>
                 <button class="download-btn" title="Download" data-tooltip="Download" aria-label="Download">
@@ -1994,6 +2512,8 @@
                     <path fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v11m0 0-4.5-4.5M12 15.5l4.5-4.5M5 20h14"/>
                   </svg>
                 </button>
+              </div>
+              <div class="toolbar-right hidden" id="toolbarRightScrub">
               </div>
             </div>
             <div class="preview-area" id="previewArea"></div>
@@ -2025,6 +2545,25 @@
       </div>
     </div>
 
+    <div class="column-modal" id="noteModal" aria-hidden="true">
+      <div class="column-dialog" role="dialog" aria-modal="true" aria-labelledby="noteDialogTitle">
+        <div class="column-dialog-head">
+          <h2 class="column-dialog-title" id="noteDialogTitle">Add Note</h2>
+          <button class="column-close" id="noteModalClose" aria-label="Close note dialog">&times;</button>
+        </div>
+        <div style="padding: 0 18px;">
+          <textarea id="noteTextarea" class="note-input" rows="5" placeholder="Type your note..."></textarea>
+        </div>
+        <div class="column-dialog-foot">
+          <div></div>
+          <div class="foot-actions">
+            <button class="text-btn" id="noteCancelBtn">Cancel</button>
+            <button class="primary-btn" id="noteSaveBtn">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       const submissions = [
         {
@@ -2043,10 +2582,7 @@
           triage: "Needs Review",
           tiv: "$48,900,000",
           priority: "Broker follow-up requested",
-          notes: [
-            "Loss runs were attached but the vessel schedule is incomplete.",
-            "Broker noted a recent expansion into a second operating region."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2118,10 +2654,7 @@
           triage: "Pass",
           tiv: "$17,027,976",
           priority: "Ready for market",
-          notes: [
-            "ACORD 125 and ACORD 140 property section were included in the packet.",
-            "Premises listed at 838 Greens Road, Houston, Texas 77060 with apartment occupancy."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2193,10 +2726,7 @@
           triage: "Blocked",
           tiv: "$88,410,000",
           priority: "Conflict with incumbent market",
-          notes: [
-            "Existing blocked relationship noted with prior submission in the same tower.",
-            "Do not advance without manager override."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2268,10 +2798,7 @@
           triage: "Needs Review",
           tiv: "$6,280,000",
           priority: "Review live music exposure",
-          notes: [
-            "Supplement mentions weekend live performances and off-site catering.",
-            "Liquor receipts increased materially year over year."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2343,10 +2870,7 @@
           triage: "Needs Review",
           tiv: "$26,480,000",
           priority: "Review updated schedule",
-          notes: [
-            "Fleet count increased from 42 to 57 units.",
-            "Property values were updated in the certified SOV."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2418,10 +2942,7 @@
           triage: "Pass",
           tiv: "$33,205,000",
           priority: "Ready for market",
-          notes: [
-            "One new leased location added in Tampa.",
-            "Broker included a clean five-year loss summary."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2493,10 +3014,7 @@
           triage: "Needs Review",
           tiv: "$142,800,000",
           priority: "Modeling review needed",
-          notes: [
-            "Cat model report attached for the coastal locations.",
-            "Broker flagged storm deductible questions."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2568,10 +3086,7 @@
           triage: "Pass",
           tiv: "$64,920,000",
           priority: "Equipment breakdown included",
-          notes: [
-            "Boiler and machinery values broken out in support file.",
-            "No adverse loss activity reported."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2643,10 +3158,7 @@
           triage: "Needs Review",
           tiv: "$74,110,500",
           priority: "Verify protection updates",
-          notes: [
-            "Sprinkler upgrade letter attached.",
-            "Awaiting confirmation on one tenant-occupied building."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2718,10 +3230,7 @@
           triage: "Pass",
           tiv: "$58,304,220",
           priority: "Ready for market",
-          notes: [
-            "Updated valuation statement included.",
-            "No changes to occupancy or operating model."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2793,10 +3302,7 @@
           triage: "Needs Review",
           tiv: "$21,994,300",
           priority: "Check IM schedule",
-          notes: [
-            "Inland marine schedule added for mobile equipment.",
-            "Builder's risk section not requested."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2868,10 +3374,7 @@
           triage: "Pass",
           tiv: "$44,108,901",
           priority: "Ready for market",
-          notes: [
-            "Updated statement of values attached.",
-            "No changes to occupancy mix were reported."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -2943,10 +3446,7 @@
           triage: "Needs Review",
           tiv: "$39,660,750",
           priority: "Stock value review",
-          notes: [
-            "Refrigerated stock values added as separate support.",
-            "Broker asked for quick turnaround before market approach."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3018,10 +3518,7 @@
           triage: "Pass",
           tiv: "$112,904,100",
           priority: "Large campus account",
-          notes: [
-            "Campus valuation supplement attached.",
-            "No prior conflict identified."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3093,10 +3590,7 @@
           triage: "Needs Review",
           tiv: "$12,880,440",
           priority: "Review equipment values",
-          notes: [
-            "Updated bakery equipment values included.",
-            "Business income requested on blanket basis."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3168,10 +3662,7 @@
           triage: "Needs Review",
           tiv: "$29,440,200",
           priority: "Machinery review",
-          notes: [
-            "Updated machinery schedule included.",
-            "No major valuation changes outside equipment."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3243,10 +3734,7 @@
           triage: "Pass",
           tiv: "$18,992,500",
           priority: "Ready for market",
-          notes: [
-            "Hail supplement attached.",
-            "Roof updates completed at two locations."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3318,10 +3806,7 @@
           triage: "Needs Review",
           tiv: "$47,224,900",
           priority: "Review prior losses",
-          notes: [
-            "Loss summary updated to include a recent water claim.",
-            "Broker requests quick conflict check."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3393,10 +3878,7 @@
           triage: "Pass",
           tiv: "$53,880,000",
           priority: "Ready for market",
-          notes: [
-            "Tenant schedule attached.",
-            "Occupancy remains over 90% across all buildings."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3468,10 +3950,7 @@
           triage: "Needs Review",
           tiv: "$27,090,610",
           priority: "Review yard exposure",
-          notes: [
-            "Yard schedule attached.",
-            "Large amount of outdoor equipment storage."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3543,10 +4022,7 @@
           triage: "Pass",
           tiv: "$14,338,220",
           priority: "Ready for market",
-          notes: [
-            "Leasehold improvements updated across three locations.",
-            "No material loss activity noted."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3618,10 +4094,7 @@
           triage: "Needs Review",
           tiv: "$38,110,700",
           priority: "Wind review needed",
-          notes: [
-            "Wind support attachment included.",
-            "Dock exposure and TIV concentrations need review."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3693,10 +4166,7 @@
           triage: "Pass",
           tiv: "$67,803,440",
           priority: "Ready for market",
-          notes: [
-            "Updated rent roll attached.",
-            "No change in occupancy concentration."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3768,10 +4238,7 @@
           triage: "Needs Review",
           tiv: "$11,604,880",
           priority: "Equipment review",
-          notes: [
-            "Medical equipment values updated.",
-            "No recent property losses reported."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -3843,10 +4310,7 @@
           triage: "Pass",
           tiv: "$31,701,550",
           priority: "Ready for market",
-          notes: [
-            "Warehouse supplement attached.",
-            "Broker included updated sprinkler details."
-          ],
+          notes: [],
           attachments: {
             email: "Email",
             sov: "Certified SOV",
@@ -4156,6 +4620,28 @@
         `;
       }
 
+      function editableField(label, value, dataKey) {
+        return `
+          <div>
+            <div class="field-label">${label}</div>
+            <div class="field-value">
+              <input class="inline-edit" type="text" value="${(value || "").replace(/"/g, "&quot;")}" data-edit-key="${dataKey}" />
+            </div>
+          </div>
+        `;
+      }
+
+      function toggleField(label, options, value, dataKey) {
+        return `
+          <div>
+            <div class="field-label">${label}</div>
+            <div class="segmented-field" data-toggle-key="${dataKey}">
+              ${options.map(opt => `<button type="button" data-value="${opt}" class="${value === opt ? "active" : ""}">${opt}</button>`).join("")}
+            </div>
+          </div>
+        `;
+      }
+
       function parseFlexibleDateInput(value) {
         if (!value) return null;
         const trimmed = String(value).trim();
@@ -4207,7 +4693,7 @@
             <div class="field-label">${label}</div>
             <div class="field-value date-input-shell">
               <input class="date-field-input" type="text" value="${displayValue}" placeholder="m/d/yy" data-date-key="${key}" />
-              <button class="date-picker-btn" type="button" data-date-button="${key}" aria-label="Open ${label} date picker">
+              <button class="date-picker-btn" type="button" tabindex="-1" data-date-button="${key}" aria-label="Open ${label} date picker">
                 <svg viewBox="0 0 20 20" aria-hidden="true">
                   <path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M5.25 2.75v2.5M14.75 2.75v2.5M3.75 5.25h12.5M4.75 4h10.5A1.75 1.75 0 0 1 17 5.75v9.5A1.75 1.75 0 0 1 15.25 17H4.75A1.75 1.75 0 0 1 3 15.25v-9.5A1.75 1.75 0 0 1 4.75 4Z"/>
                   <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M6.6 9.1l.9.9M7.5 9.1l-.9.9M10.1 9.1l.9.9M11 9.1l-.9.9M13.6 9.1l.9.9M14.5 9.1l-.9.9M6.1 12.3h1.8M9.6 12.3h1.8M13.1 12.3h1.8M6.1 14.8h1.8M9.6 14.8h1.8M13.1 14.8h1.8"/>
@@ -4231,13 +4717,14 @@
         `;
       }
 
-      function statePickerField(label, value) {
+      function statePickerField(label, value, key = "homeState") {
         return `
           <div>
             <div class="field-label">${label}</div>
             <div class="field-value state-picker-shell field-value selectish compact">
-              <input class="state-picker-input" type="text" list="stateOptions" value="${value || ""}" placeholder="State" data-state-picker="homeState" />
+              <input class="state-picker-input" type="text" autocomplete="off" value="${value || ""}" placeholder="State" data-state-picker="${key}" />
               <span class="field-caret"></span>
+              <div class="state-dropdown" data-dropdown-for="${key}"></div>
             </div>
           </div>
         `;
@@ -4297,11 +4784,13 @@
         });
       }
 
-      function brokerField(label, value, muted = false) {
+      function brokerField(label, value, muted = false, dataKey = "") {
         return `
           <div>
             <div class="field-label">${label}</div>
-            <div class="field-value ${muted ? "broker-disabled" : ""}">${value || "—"}</div>
+            <div class="field-value ${muted ? "broker-disabled" : ""}">
+              <input class="inline-edit" type="text" value="${(value || "").replace(/"/g, "&quot;")}" data-edit-key="${dataKey}" />
+            </div>
           </div>
         `;
       }
@@ -4707,27 +5196,38 @@
         if (insuredFields) {
           insuredFields.classList.add("insured-grid");
           insuredFields.innerHTML = [
-            `<div class="field-span-wide">${field("Insured", submission.insured)}</div>`,
-            statePickerField("Home State", toStateCode(submission.insuredDetails.homeState)),
-            field("Address 1", submission.insuredDetails.address1),
-            field("Address 2", submission.insuredDetails.address2 || "—"),
-            field("City", submission.insuredDetails.city),
-            field("State", submission.insuredDetails.state),
-            field("Zip", submission.insuredDetails.zip),
-            field("FEIN", submission.insuredDetails.fein),
-            field("NAICS", submission.insuredDetails.naics),
-            field("OFAC", submission.insuredDetails.ofac)
+            `<div class="field-span-wide">${editableField("Insured", submission.insured, "insured")}</div>`,
+            statePickerField("Home State", toStateCode(submission.insuredDetails.homeState), "homeState"),
+            editableField("Address 1", submission.insuredDetails.address1, "address1"),
+            editableField("Address 2", submission.insuredDetails.address2, "address2"),
+            editableField("City", submission.insuredDetails.city, "city"),
+            statePickerField("State", toStateCode(submission.insuredDetails.state), "state"),
+            editableField("Zip", submission.insuredDetails.zip, "zip"),
+            editableField("FEIN", submission.insuredDetails.fein, "fein"),
+            editableField("NAICS", submission.insuredDetails.naics, "naics"),
+            toggleField("OFAC", ["Clear", "Block"], submission.insuredDetails.ofac, "ofac")
           ].join("");
 
-          insuredFields.querySelectorAll(".state-picker-input").forEach((input) => {
-            const commitState = () => {
-              const nextValue = normalizeStateValue(input.value);
-              if (!nextValue) return;
-              submission.insuredDetails.homeState = nextValue;
-              input.value = nextValue;
-            };
-            input.addEventListener("blur", commitState);
-            input.addEventListener("change", commitState);
+          insuredFields.querySelectorAll(".segmented-field").forEach((toggle) => {
+            const toggleKey = toggle.dataset.toggleKey;
+            toggle.querySelectorAll("button").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                toggle.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                submission.insuredDetails[toggleKey] = btn.dataset.value;
+              });
+            });
+          });
+
+          insuredFields.querySelectorAll(".inline-edit").forEach((input) => {
+            input.addEventListener("blur", () => {
+              const key = input.dataset.editKey;
+              if (key === "insured") {
+                submission.insured = input.value;
+              } else {
+                submission.insuredDetails[key] = input.value;
+              }
+            });
             input.addEventListener("keydown", (event) => {
               if (event.key === "Enter") {
                 event.preventDefault();
@@ -4735,9 +5235,98 @@
               }
             });
           });
+
+          insuredFields.querySelectorAll(".state-picker-input").forEach((input) => {
+            const pickerKey = input.dataset.statePicker;
+            const dropdown = input.parentElement.querySelector(`.state-dropdown[data-dropdown-for="${pickerKey}"]`);
+            let highlightedIndex = -1;
+
+            const allStates = Object.entries(stateAbbreviations).map(([name, code]) => ({ name, code }));
+
+            function filterStates(query) {
+              if (!query) return allStates;
+              const q = query.toLowerCase();
+              return allStates.filter(s => s.name.toLowerCase().includes(q) || s.code.toLowerCase().includes(q));
+            }
+
+            function renderDropdown(query) {
+              const matches = filterStates(query);
+              highlightedIndex = -1;
+              if (matches.length === 0) {
+                dropdown.innerHTML = `<div class="state-dropdown-empty">No matches</div>`;
+              } else {
+                dropdown.innerHTML = matches.map((s, i) =>
+                  `<div class="state-dropdown-item" data-index="${i}" data-code="${s.code}">${s.name} <span class="state-code">${s.code}</span></div>`
+                ).join("");
+              }
+              dropdown.classList.add("open");
+            }
+
+            function selectState(code) {
+              const nextValue = normalizeStateValue(code);
+              if (nextValue) {
+                submission.insuredDetails[pickerKey] = nextValue;
+                input.value = nextValue;
+              }
+              dropdown.classList.remove("open");
+            }
+
+            function updateHighlight(items) {
+              items.forEach((el, i) => el.classList.toggle("highlighted", i === highlightedIndex));
+              if (highlightedIndex >= 0 && items[highlightedIndex]) {
+                items[highlightedIndex].scrollIntoView({ block: "nearest" });
+              }
+            }
+
+            input.addEventListener("focus", () => renderDropdown(input.value));
+            input.addEventListener("input", () => renderDropdown(input.value));
+
+            input.addEventListener("keydown", (event) => {
+              const items = dropdown.querySelectorAll(".state-dropdown-item");
+              if (event.key === "ArrowDown") {
+                event.preventDefault();
+                highlightedIndex = Math.min(highlightedIndex + 1, items.length - 1);
+                updateHighlight(items);
+              } else if (event.key === "ArrowUp") {
+                event.preventDefault();
+                highlightedIndex = Math.max(highlightedIndex - 1, 0);
+                updateHighlight(items);
+              } else if (event.key === "Enter") {
+                event.preventDefault();
+                if (highlightedIndex >= 0 && items[highlightedIndex]) {
+                  selectState(items[highlightedIndex].dataset.code);
+                } else {
+                  selectState(input.value);
+                }
+                input.blur();
+              } else if (event.key === "Escape") {
+                dropdown.classList.remove("open");
+              }
+            });
+
+            dropdown.addEventListener("mousedown", (event) => {
+              event.preventDefault();
+              const item = event.target.closest(".state-dropdown-item");
+              if (item) selectState(item.dataset.code);
+            });
+
+            input.addEventListener("blur", () => {
+              setTimeout(() => {
+                dropdown.classList.remove("open");
+                const nextValue = normalizeStateValue(input.value);
+                if (nextValue) {
+                  submission.insuredDetails[pickerKey] = nextValue;
+                  input.value = nextValue;
+                }
+              }, 150);
+            });
+          });
         }
         if (insuredDescription) {
           insuredDescription.textContent = submission.insuredDetails.description;
+          insuredDescription.onblur = () => {
+            submission.insuredDetails.description = insuredDescription.textContent;
+          };
         }
 
         if (submissionFields) {
@@ -4745,14 +5334,40 @@
             dateField("Incept", submission.submissionDetails.incept, "incept"),
             dateField("Expiry", submission.submissionDetails.expiry, "expiry"),
             dateField("Need By", submission.submissionDetails.needBy, "needBy"),
-            field("Client Reference", submission.submissionDetails.clientReference),
-            field("Date Received", formatShortDateTime(submission.submissionDetails.dateReceived)),
-            field("TIV", submission.tiv),
-            field("Blocking Company", submission.submissionDetails.blockingCompany),
-            field("Blocking Broker", submission.submissionDetails.blockingBroker),
-            field("Blocking Sub ID", submission.submissionDetails.blockingSubId),
-            field("Priority", submission.priority)
+            editableField("Client Reference", submission.submissionDetails.clientReference, "sub:clientReference"),
+            `<div><div class="field-label">Date Received</div><div class="field-value broker-disabled">${formatShortDateTime(submission.submissionDetails.dateReceived)}</div></div>`,
+            `<div><div class="field-label">TIV</div><div class="field-value broker-disabled">${submission.tiv}</div></div>`,
+            editableField("Blocking Company", submission.submissionDetails.blockingCompany, "sub:blockingCompany"),
+            editableField("Blocking Broker", submission.submissionDetails.blockingBroker, "sub:blockingBroker"),
+            editableField("Blocking Sub ID", submission.submissionDetails.blockingSubId, "sub:blockingSubId"),
+            toggleField("Priority", ["Rush", "Normal"], submission.priority === "Rush" ? "Rush" : "Normal", "sub:priority")
           ].join("");
+
+          submissionFields.querySelectorAll(".inline-edit").forEach((input) => {
+            input.addEventListener("blur", () => {
+              const key = input.dataset.editKey;
+              const field = key.replace("sub:", "");
+              submission.submissionDetails[field] = input.value;
+            });
+            input.addEventListener("keydown", (event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                input.blur();
+              }
+            });
+          });
+
+          submissionFields.querySelectorAll(".segmented-field").forEach((toggle) => {
+            const toggleKey = toggle.dataset.toggleKey;
+            toggle.querySelectorAll("button").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                toggle.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                const field = toggleKey.replace("sub:", "");
+                submission.priority = btn.dataset.value;
+              });
+            });
+          });
 
           submissionFields.querySelectorAll(".date-picker-btn").forEach((button) => {
             button.addEventListener("click", () => {
@@ -4771,8 +5386,11 @@
           submissionFields.querySelectorAll(".native-date-input").forEach((input) => {
             input.addEventListener("change", () => {
               if (!input.value) return;
-              submission.submissionDetails[input.dataset.nativeDateKey] = normalizeDateValue(input.value);
-              renderLeftPanels(submission);
+              const key = input.dataset.nativeDateKey;
+              const normalized = normalizeDateValue(input.value);
+              submission.submissionDetails[key] = normalized;
+              const textInput = submissionFields.querySelector(`[data-date-key="${key}"]`);
+              if (textInput) textInput.value = formatShortDate(normalized);
             });
           });
 
@@ -4780,8 +5398,9 @@
             const commitValue = () => {
               const nextValue = input.value.trim();
               if (!nextValue) return;
-              submission.submissionDetails[input.dataset.dateKey] = normalizeDateValue(nextValue);
-              renderLeftPanels(submission);
+              const normalized = normalizeDateValue(nextValue);
+              submission.submissionDetails[input.dataset.dateKey] = normalized;
+              input.value = normalized ? formatShortDate(normalized) : nextValue;
             };
             input.addEventListener("blur", commitValue);
             input.addEventListener("keydown", (event) => {
@@ -4789,19 +5408,45 @@
                 event.preventDefault();
                 input.blur();
               }
+              if (event.key === "ArrowDown") {
+                event.preventDefault();
+                const key = input.dataset.dateKey;
+                const nativeInput = submissionFields.querySelector(`[data-native-date-key="${key}"]`);
+                if (nativeInput && typeof nativeInput.showPicker === "function") {
+                  nativeInput.showPicker();
+                }
+              }
             });
           });
         }
 
         if (brokerFields) {
           brokerFields.innerHTML = [
-            brokerField("Broker Company", submission.brokerDetails.brokerCompany),
-            brokerField("Broker", submission.brokerDetails.broker, true),
-            brokerField("Assistant", submission.brokerDetails.assistant, true),
-            brokerField("Email Sender", submission.brokerDetails.emailSender, true),
-            brokerField("Requested UW", submission.brokerDetails.requestedUw),
-            brokerField("Sender", submission.sender)
+            brokerField("Broker Company", submission.brokerDetails.brokerCompany, false, "brk:brokerCompany"),
+            brokerField("Broker", submission.brokerDetails.broker, true, "brk:broker"),
+            brokerField("Assistant", submission.brokerDetails.assistant, true, "brk:assistant"),
+            brokerField("Email Sender", submission.brokerDetails.emailSender, true, "brk:emailSender"),
+            brokerField("Requested UW", submission.brokerDetails.requestedUw, false, "brk:requestedUw"),
+            brokerField("Sender", submission.sender, false, "brk:sender")
           ].join("");
+
+          brokerFields.querySelectorAll(".inline-edit").forEach((input) => {
+            input.addEventListener("blur", () => {
+              const key = input.dataset.editKey;
+              const field = key.replace("brk:", "");
+              if (field === "sender") {
+                submission.sender = input.value;
+              } else {
+                submission.brokerDetails[field] = input.value;
+              }
+            });
+            input.addEventListener("keydown", (event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                input.blur();
+              }
+            });
+          });
         }
 
         if (notesList) {
@@ -4843,12 +5488,21 @@
       const headerBrand = document.getElementById("headerBrand");
       const edgeToggle = document.getElementById("edgeToggle");
 
+      const resizeBar = document.querySelector(".resize-bar");
+
+      function positionEdgeToggle() {
+        if (!edgeToggle || !resizeBar) return;
+        const barRect = resizeBar.getBoundingClientRect();
+        edgeToggle.style.top = `${barRect.top + barRect.height / 2}px`;
+      }
+
       function syncTrayState() {
         if (!tray || !headerBrand || !edgeToggle) return;
         const closed = tray.classList.contains("closed");
         headerBrand.classList.toggle("hidden", !closed);
         edgeToggle.classList.add("visible");
         edgeToggle.textContent = closed ? "›" : "‹";
+        positionEdgeToggle();
       }
 
       if (edgeToggle && tray) {
@@ -4857,6 +5511,9 @@
           syncTrayState();
         });
       }
+
+      window.addEventListener("resize", positionEdgeToggle);
+      new MutationObserver(positionEdgeToggle).observe(document.body, { childList: true, subtree: true, attributes: true });
 
       const submissionTable = document.querySelector(".submission-table");
       const submissionListEl = document.getElementById("submissionList");
@@ -4881,6 +5538,7 @@
         const rect = submissionTable.getBoundingClientRect();
         const next = Math.max(100, Math.min(window.innerHeight - 420, event.clientY - rect.top - 41));
         submissionListEl.style.height = `${next}px`;
+        positionEdgeToggle();
       });
 
       window.addEventListener("pointerup", () => {
@@ -4995,6 +5653,55 @@
         });
       }
 
+      const noteModal = document.getElementById("noteModal");
+      const noteTextarea = document.getElementById("noteTextarea");
+      const addNoteBtn = document.getElementById("addNoteBtn");
+      const noteModalClose = document.getElementById("noteModalClose");
+      const noteCancelBtn = document.getElementById("noteCancelBtn");
+      const noteSaveBtn = document.getElementById("noteSaveBtn");
+
+      function openNoteModal() {
+        if (!noteModal || !selectedSubmissionId) return;
+        noteTextarea.value = "";
+        noteModal.classList.add("open");
+        noteModal.setAttribute("aria-hidden", "false");
+        noteTextarea.focus();
+      }
+
+      function closeNoteModal() {
+        if (!noteModal) return;
+        noteModal.classList.remove("open");
+        noteModal.setAttribute("aria-hidden", "true");
+      }
+
+      function saveNote() {
+        const text = noteTextarea.value.trim();
+        if (!text) return;
+        const submission = getSelectedSubmission();
+        if (!submission) return;
+        submission.notes.push(text);
+        renderLeftPanels(submission);
+        closeNoteModal();
+      }
+
+      if (addNoteBtn) addNoteBtn.addEventListener("click", openNoteModal);
+      if (noteModalClose) noteModalClose.addEventListener("click", closeNoteModal);
+      if (noteCancelBtn) noteCancelBtn.addEventListener("click", closeNoteModal);
+      if (noteSaveBtn) noteSaveBtn.addEventListener("click", saveNote);
+      if (noteTextarea) {
+        noteTextarea.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+            event.preventDefault();
+            saveNote();
+          }
+        });
+      }
+      if (noteModal) {
+        noteModal.addEventListener("click", (event) => {
+          if (event.target === noteModal) closeNoteModal();
+        });
+      }
+
       window.addEventListener("pointermove", (event) => {
         if (!activeColumnResize) return;
         const delta = event.clientX - activeColumnResize.startX;
@@ -5004,9 +5711,479 @@
 
       applyDensity();
       syncTrayState();
+      selectedSubmissionId = submissions[0].id;
+      leftPanelSubmissionId = submissions[0].id;
+      selectedSubmissionIds = new Set([submissions[0].id]);
+      selectedAttachment = "email";
       render();
       window.addEventListener("DOMContentLoaded", render);
       window.addEventListener("load", render);
+
+      const scrubBtn = document.getElementById("scrubBtn");
+      const clearanceBtn = document.getElementById("clearanceBtn");
+      const clearanceActions = document.querySelector(".submission-actions:not(.scrub-actions)");
+      const scrubActions = document.getElementById("scrubActions");
+      const scrubContent = document.getElementById("scrubContent");
+      const listWrap = document.querySelector(".list-wrap");
+      const resizeBarScrub = document.querySelector(".resize-bar");
+      const detailsScrub = document.querySelector(".details");
+
+      function scrubReadonlyField(label, value, annotation) {
+        return `
+          <div>
+            <div class="field-label">${label}<span class="scrub-annotation">${annotation || ""}</span></div>
+            <div class="field-value broker-disabled">
+              <input class="inline-edit" type="text" value="${(value || "").replace(/"/g, "&quot;")}" readonly tabindex="-1" />
+            </div>
+          </div>
+        `;
+      }
+
+      function pf(label, value, key, origValue) {
+        return editableField(label, value, `scrub:${key}`) + origField(label, origValue || "");
+      }
+
+      function pfNarrow(label, value, key, origValue) {
+        return editableField(label, value, `scrub:${key}`) + origField(label, origValue || "");
+      }
+
+      function origField(label, value) {
+        return `
+          <div class="orig-field">
+            <div class="field-label">Orig ${label}</div>
+            <div class="field-value">
+              <input class="inline-edit" type="text" value="${(value || "").replace(/"/g, "&quot;")}" readonly tabindex="-1" />
+            </div>
+          </div>
+        `;
+      }
+
+      let scrubBuildingIndex = 0;
+
+      function renderScrubContent(submission) {
+        if (!scrubContent || !submission) return;
+        if (!submission.scrubData) {
+          const origB = {
+            address1: submission.insuredDetails.address1 || "",
+            address2: submission.insuredDetails.address2 || "",
+            city: submission.insuredDetails.city || "",
+            state: submission.insuredDetails.state || "",
+            zip: submission.insuredDetails.zip || "",
+            county: "", country: "",
+            building: "", contents: "", bi: "", other: "",
+            construction: "", occupancy: "",
+            stories: "", yearBuilt: "", sqft: "",
+            wiringYear: "", roofingYear: "", plumbingYear: "", heatingYear: "",
+            roofType: "",
+            fireAlarm: "", fireAlarmType: "",
+            sprinkler: "", sprinklerType: "",
+            numBuildings: "", numUnits: "",
+            wallType: "", roofShape: ""
+          };
+          submission.scrubData = {
+            buildings: [{ ...origB, orig: { ...origB } }]
+          };
+        }
+        const data = submission.scrubData;
+        if (scrubBuildingIndex >= data.buildings.length) {
+          const emptyB = {
+            address1: "", address2: "", city: "", state: "", zip: "",
+            county: "", country: "",
+            building: "", contents: "", bi: "", other: "",
+            construction: "", occupancy: "",
+            stories: "", yearBuilt: "", sqft: "",
+            wiringYear: "", roofingYear: "", plumbingYear: "", heatingYear: "",
+            roofType: "",
+            fireAlarm: "", fireAlarmType: "",
+            sprinkler: "", sprinklerType: "",
+            numBuildings: "", numUnits: "",
+            wallType: "", roofShape: ""
+          };
+          data.buildings.push({ ...emptyB, orig: { ...emptyB } });
+        }
+        const b = data.buildings[scrubBuildingIndex];
+        if (!b.orig) b.orig = {};
+        const o = b.orig;
+        const ef = (label, value, key) => editableField(label, value, `scrub:${key}`);
+        const rf = (label, value, ann) => scrubReadonlyField(label, value, ann);
+        const ep = (label, value, key) => editableField(label, value, `scrub:${key}`) + origField(label, o[key] || "");
+        const epn = (label, value, key) => `
+          <div>
+            <div class="field-label">${label}</div>
+            <div class="field-value"><input class="inline-edit" type="text" value="${(value || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:${key}" /></div>
+            <div class="field-value orig-inline"><input class="inline-edit" type="text" value="${(o[key] || "").replace(/"/g, "&quot;")}" readonly tabindex="-1" /></div>
+          </div>`;
+        const rfn = (label, value, ann) => `
+          <div class="no-orig">
+            <div class="field-label">${label}<span class="scrub-annotation">${ann || ""}</span></div>
+            <div class="field-value broker-disabled"><input class="inline-edit" type="text" value="${(value || "").replace(/"/g, "&quot;")}" readonly tabindex="-1" /></div>
+          </div>`;
+        const toggleNarrowOrig = (label, options, value, key) => `
+          <div>
+            <div class="field-label">${label}</div>
+            <div class="segmented-field" data-toggle-key="scrub:${key}">
+              ${options.map(opt => `<button type="button" data-value="${opt}" class="${value === opt ? "active" : ""}">${opt}</button>`).join("")}
+            </div>
+            <div class="field-value orig-inline"><input class="inline-edit" type="text" value="${(o[key] || "").replace(/"/g, "&quot;")}" readonly tabindex="-1" /></div>
+          </div>`;
+
+        scrubContent.innerHTML = `
+          <div style="display:flex;justify-content:flex-end;align-items:center;gap:6px;padding:0 4px;">
+            <button class="action-btn compact btn-complete" id="completeBtn" type="button">Complete</button>
+            <button class="bldg-pill" id="origToggleBtn" type="button">Hide Orig</button>
+          </div>
+          <div class="card detail-card">
+            <div class="card-title">
+              <h3>Building</h3>
+              <div class="bldg-pills">
+                ${[1,2,3,4,5].map(n => `<button class="bldg-pill ${n - 1 === scrubBuildingIndex ? "active" : ""}" data-bldg="${n - 1}">Bldg ${n}</button>`).join("")}
+              </div>
+            </div>
+            <div class="scrub-two-col">
+              <div class="scrub-field-grid">
+                <div>
+                  <div class="field-label">Address 1 <button class="scrub-maps-btn" id="mapsBtn" type="button"><svg viewBox="0 0 16 16" width="12" height="12"><path d="M8 1.5a5.5 5.5 0 0 1 5.5 5.5c0 3.04-5.5 8.5-5.5 8.5S2.5 10.04 2.5 7A5.5 5.5 0 0 1 8 1.5Z" fill="#dc2626"/><circle cx="8" cy="7" r="2" fill="#fff"/></svg><span>Maps</span></button></div>
+                  <div class="field-value"><input class="inline-edit" type="text" value="${(b.address1 || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:address1" /></div>
+                </div>
+                ${origField("Address 1", o.address1)}
+                <div>
+                  <div class="field-label">Address 2 <span class="scrub-rooftop-pill">Rooftop</span></div>
+                  <div class="field-value"><input class="inline-edit" type="text" value="${(b.address2 || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:address2" /></div>
+                </div>
+                ${origField("Address 2", o.address2)}
+                ${ep("City", b.city, "city")}
+                <div class="scrub-state-zip">
+                  <div class="field-label">State</div>
+                  <div class="scrub-state-zip-fields">
+                    <div class="field-value"><input class="inline-edit" type="text" value="${(b.state || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:state" /></div>
+                    <span class="scrub-zip-label">Zip</span>
+                    <div class="scrub-zip"><div class="field-value"><input class="inline-edit" type="text" value="${(b.zip || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:zip" /></div></div>
+                  </div>
+                </div>
+                <div class="scrub-state-zip orig-field">
+                  <div class="field-label">Orig State</div>
+                  <div class="scrub-state-zip-fields">
+                    <div class="field-value"><input class="inline-edit" type="text" value="${(o.state || "").replace(/"/g, "&quot;")}" readonly tabindex="-1" /></div>
+                    <span class="scrub-zip-label">Orig Zip</span>
+                    <div class="scrub-zip"><div class="field-value"><input class="inline-edit" type="text" value="${(o.zip || "").replace(/"/g, "&quot;")}" readonly tabindex="-1" /></div></div>
+                  </div>
+                </div>
+                ${rf("County", b.county, "Defaulted")}
+                <div>
+                  <div class="field-label">Country</div>
+                  <div class="field-value" style="width:50px;margin-left:auto;"><input class="inline-edit" type="text" value="${(b.country || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:country" /></div>
+                </div>
+                ${origField("Country", o.country)}
+              </div>
+              <div>
+                <div class="scrub-section-title">Value</div>
+                <div class="scrub-field-grid">
+                  ${ep("Building", b.building, "building")}
+                  ${ep("Contents", b.contents, "contents")}
+                  ${ep("BI", b.bi, "bi")}
+                  ${ep("Other", b.other, "other")}
+                  ${rf("Total", "", "Calculated")}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="scrub-two-col">
+            <div class="card detail-card">
+              <div class="card-title"><h3>Construction</h3></div>
+              <div class="scrub-field-grid">
+                ${ep("Construction", b.construction, "construction")}
+                ${ep("Occupancy", b.occupancy, "occupancy")}
+              </div>
+              <div class="scrub-field-grid scrub-narrow">
+                ${rfn("Distance to Hydrant", "", "Calculated")}
+                ${rfn("Protection Class", "", "Calculated")}
+                ${epn("# of Stories", b.stories, "stories")}
+                ${epn("Year Built", b.yearBuilt, "yearBuilt")}
+                ${epn("Square Footage", b.sqft, "sqft")}
+                ${epn("Wiring Year", b.wiringYear, "wiringYear")}
+                ${epn("Roofing Year", b.roofingYear, "roofingYear")}
+                ${epn("Plumbing Year", b.plumbingYear, "plumbingYear")}
+                ${epn("Heating Year", b.heatingYear, "heatingYear")}
+                ${epn("Roof Type", b.roofType, "roofType")}
+              </div>
+            </div>
+            <div class="card detail-card">
+              <div class="card-title"><h3>Protection</h3></div>
+              <div class="scrub-field-grid scrub-narrow">
+                ${toggleNarrowOrig("Fire Alarm", ["Yes", "No"], b.fireAlarm || "No", "fireAlarm")}
+                ${epn("Fire Alarm Type", b.fireAlarmType, "fireAlarmType")}
+                ${toggleNarrowOrig("Sprinkler", ["Yes", "No"], b.sprinkler || "No", "sprinkler")}
+                ${epn("Sprinkler Type", b.sprinklerType, "sprinklerType")}
+                ${epn("# of Buildings", b.numBuildings, "numBuildings")}
+                ${epn("# of Units", b.numUnits, "numUnits")}
+              </div>
+              <div class="scrub-field-grid">
+                ${ep("Wall Type", b.wallType, "wallType")}
+                ${ep("Roof Shape", b.roofShape, "roofShape")}
+              </div>
+              <div class="scrub-field-grid scrub-narrow">
+                ${rfn("Wind Tier", "", "Calculated")}
+                ${rfn("Distance to Hydrant", "", "Calculated")}
+                ${rfn("Distance to Fire Station", "", "Calculated")}
+                ${rfn("Distance to Coast", "", "Calculated")}
+              </div>
+            </div>
+          </div>
+        `;
+
+        scrubContent.querySelectorAll(".inline-edit:not([readonly])").forEach((input) => {
+          input.addEventListener("blur", () => {
+            const key = input.dataset.editKey;
+            if (!key) return;
+            const field = key.replace("scrub:", "");
+            if (field === "insured") {
+              submission.insured = input.value;
+            } else {
+              b[field] = input.value;
+            }
+          });
+          input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") { event.preventDefault(); input.blur(); }
+          });
+        });
+
+        function updateScrubTypeField(toggleKey, typeKey) {
+          const typeInput = scrubContent.querySelector(`[data-edit-key="scrub:${typeKey}"]`);
+          if (!typeInput) return;
+          const isNo = b[toggleKey] === "No" || !b[toggleKey];
+          const wrapper = typeInput.closest(".field-value");
+          if (isNo) {
+            if (wrapper) wrapper.classList.add("broker-disabled");
+            typeInput.setAttribute("readonly", "");
+            typeInput.setAttribute("tabindex", "-1");
+            typeInput.value = "";
+          } else {
+            if (wrapper) wrapper.classList.remove("broker-disabled");
+            typeInput.removeAttribute("readonly");
+            typeInput.removeAttribute("tabindex");
+          }
+        }
+
+        function setScrubToggle(toggle, value) {
+          const field = toggle.dataset.toggleKey.replace("scrub:", "");
+          b[field] = value;
+          toggle.querySelectorAll("button").forEach(btn => {
+            btn.classList.toggle("active", btn.dataset.value === value);
+          });
+          if (field === "fireAlarm") updateScrubTypeField("fireAlarm", "fireAlarmType");
+          if (field === "sprinkler") updateScrubTypeField("sprinkler", "sprinklerType");
+        }
+
+        scrubContent.querySelectorAll(".segmented-field").forEach((toggle) => {
+          toggle.setAttribute("tabindex", "0");
+          toggle.querySelectorAll("button").forEach((btn) => {
+            btn.setAttribute("tabindex", "-1");
+            btn.addEventListener("click", () => {
+              setScrubToggle(toggle, btn.dataset.value);
+            });
+          });
+          toggle.addEventListener("keydown", (event) => {
+            const key = event.key.toUpperCase();
+            if (key === "Y") {
+              event.preventDefault();
+              setScrubToggle(toggle, "Yes");
+            } else if (key === "N") {
+              event.preventDefault();
+              setScrubToggle(toggle, "No");
+            }
+          });
+        });
+
+        updateScrubTypeField("fireAlarm", "fireAlarmType");
+        updateScrubTypeField("sprinkler", "sprinklerType");
+
+        scrubContent.querySelectorAll(".bldg-pill").forEach((pill) => {
+          pill.addEventListener("click", () => {
+            scrubBuildingIndex = Number(pill.dataset.bldg);
+            renderScrubContent(submission);
+          });
+        });
+
+        function getLastTabbableField() {
+          const all = scrubContent.querySelectorAll('input.inline-edit:not([readonly]):not([tabindex="-1"]), .segmented-field[tabindex="0"]');
+          return all.length ? all[all.length - 1] : null;
+        }
+
+        function advanceBuilding() {
+          setTimeout(() => {
+            if (scrubBuildingIndex < 4) {
+              scrubBuildingIndex++;
+            } else {
+              scrubBuildingIndex = 0;
+            }
+            renderScrubContent(submission);
+            scrubContent.scrollTop = 0;
+            const firstInput = scrubContent.querySelector('input.inline-edit:not([readonly]):not([tabindex="-1"])');
+            if (firstInput) firstInput.focus();
+          }, 0);
+        }
+
+        function attachLastFieldHandler() {
+          const last = getLastTabbableField();
+          if (!last) return;
+          last.addEventListener("keydown", (event) => {
+            if ((event.key === "Tab" && !event.shiftKey) || event.key === "Enter") {
+              event.preventDefault();
+              const btn = document.getElementById("completeBtn");
+              if (btn) {
+                btn.focus();
+                btn.scrollIntoView({ block: "nearest" });
+              }
+            }
+          });
+        }
+
+        attachLastFieldHandler();
+
+        const completeBtn = document.getElementById("completeBtn");
+        if (completeBtn) {
+          completeBtn.addEventListener("mousedown", (event) => {
+            event.preventDefault();
+            advanceBuilding();
+          });
+          completeBtn.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              event.stopPropagation();
+              advanceBuilding();
+            }
+            if (event.key === "Tab") {
+              event.preventDefault();
+            }
+          });
+        }
+
+        const origToggleBtn = document.getElementById("origToggleBtn");
+        function syncOrigToggle() {
+          if (!origToggleBtn) return;
+          const hidden = scrubContent.classList.contains("hide-orig");
+          origToggleBtn.textContent = hidden ? "Show Orig" : "Hide Orig";
+          origToggleBtn.classList.toggle("orig-showing", !hidden);
+          origToggleBtn.classList.toggle("orig-hidden", hidden);
+        }
+        if (origToggleBtn) {
+          syncOrigToggle();
+          origToggleBtn.addEventListener("click", () => {
+            scrubContent.classList.toggle("hide-orig");
+            syncOrigToggle();
+          });
+        }
+      }
+
+      const toolbarRight = document.getElementById("toolbarRight");
+      const toolbarRightScrub = document.getElementById("toolbarRightScrub");
+      const sectionTools = document.querySelector(".section-tools");
+
+      function enterScrubMode() {
+        clearanceActions.classList.add("hidden");
+        scrubActions.classList.remove("hidden");
+        if (listWrap) listWrap.classList.add("hidden");
+        if (resizeBarScrub) resizeBarScrub.classList.add("hidden");
+        if (detailsScrub) detailsScrub.classList.add("hidden");
+        if (scrubContent) scrubContent.classList.remove("hidden");
+        if (toolbarRight) toolbarRight.classList.add("hidden");
+        if (toolbarRightScrub) toolbarRightScrub.classList.remove("hidden");
+        if (sectionTools) sectionTools.classList.add("hidden");
+        scrubBuildingIndex = 0;
+        const submission = getSelectedSubmission() || submissions[0];
+        const scrubInsuredName = document.getElementById("scrubInsuredName");
+        if (scrubInsuredName && submission) scrubInsuredName.textContent = submission.insured;
+        renderScrubContent(submission);
+      }
+
+      function exitScrubMode() {
+        scrubActions.classList.add("hidden");
+        clearanceActions.classList.remove("hidden");
+        if (scrubContent) scrubContent.classList.add("hidden");
+        if (listWrap) listWrap.classList.remove("hidden");
+        if (resizeBarScrub) resizeBarScrub.classList.remove("hidden");
+        if (detailsScrub) detailsScrub.classList.remove("hidden");
+        if (toolbarRight) toolbarRight.classList.remove("hidden");
+        if (toolbarRightScrub) toolbarRightScrub.classList.add("hidden");
+        if (sectionTools) sectionTools.classList.remove("hidden");
+      }
+
+      if (scrubBtn) scrubBtn.addEventListener("click", enterScrubMode);
+      if (clearanceBtn) clearanceBtn.addEventListener("click", exitScrubMode);
+
+      let inboxCount = 30;
+      let completedCountVal = 0;
+
+      function updateNavCounts() {
+        const inboxEl = document.getElementById("inboxCount");
+        const completedEl = document.getElementById("completedCount");
+        if (inboxEl) inboxEl.textContent = inboxCount;
+        if (completedEl) completedEl.textContent = completedCountVal;
+      }
+
+
+      const mainCompleteBtn = document.getElementById("mainCompleteBtn");
+      if (mainCompleteBtn) {
+        mainCompleteBtn.addEventListener("click", () => {
+          if (!selectedSubmissionId) return;
+          inboxCount = Math.max(0, inboxCount - 1);
+          completedCountVal++;
+          updateNavCounts();
+          moveActiveSubmission(1);
+        });
+      }
+
+      let mapVisible = false;
+      let savedPreviewHTML = "";
+
+      function toggleMap() {
+        if (!previewArea) return;
+        if (mapVisible) {
+          previewArea.innerHTML = savedPreviewHTML;
+          mapVisible = false;
+          const mapsBtn = document.getElementById("mapsBtn");
+          if (mapsBtn) mapsBtn.classList.remove("active");
+        } else {
+          savedPreviewHTML = previewArea.innerHTML;
+          previewArea.innerHTML = `
+            <div style="width:100%;height:100%;display:flex;flex-direction:column;">
+              <iframe
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-95.56,29.68,-95.46,29.76&layer=mapnik&marker=29.72,-95.51"
+                style="flex:1;border:0;border-radius:12px;"
+                allowfullscreen
+              ></iframe>
+            </div>
+          `;
+          mapVisible = true;
+          const mapsBtn = document.getElementById("mapsBtn");
+          if (mapsBtn) mapsBtn.classList.add("active");
+        }
+      }
+
+      document.addEventListener("click", (event) => {
+        const mapsBtn = event.target.closest("#mapsBtn");
+        if (mapsBtn) {
+          event.preventDefault();
+          toggleMap();
+        }
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "m") {
+          if (scrubContent && !scrubContent.classList.contains("hidden")) {
+            event.preventDefault();
+            toggleMap();
+          }
+        }
+        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "o") {
+          if (scrubContent && !scrubContent.classList.contains("hidden")) {
+            event.preventDefault();
+            const btn = document.getElementById("origToggleBtn");
+            if (btn) btn.click();
+          }
+        }
+      });
     </script>
   </body>
 </html>
