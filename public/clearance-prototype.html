@@ -1825,7 +1825,9 @@
       }
 
       .scrub-field-grid > div > .field-value,
-      .scrub-field-grid > div > .segmented-field {
+      .scrub-field-grid > div > .field-value-with-dot > .field-value,
+      .scrub-field-grid > div > .segmented-field,
+      .scrub-field-grid > div > .field-value-with-dot > .segmented-field {
         padding: 4px 8px;
       }
 
@@ -1921,6 +1923,27 @@
         display: flex;
         gap: 4px;
         align-items: center;
+      }
+
+      .bldg-pills-separator {
+        width: 1px;
+        height: 16px;
+        background: var(--line-strong);
+        margin: 0 4px;
+      }
+
+      .bldg-pill.bldg-action {
+        color: #8a93a3;
+        border-color: var(--line-soft);
+      }
+      .bldg-pill.bldg-action:hover {
+        color: #5d6677;
+        background: #f1f5f9;
+      }
+      .bldg-pill.bldg-action.destructive:hover {
+        color: #dc2626;
+        border-color: #fca5a5;
+        background: #fef2f2;
       }
 
       .bldg-pill {
@@ -2037,9 +2060,64 @@
         margin-left: 4px;
       }
 
+      .confidence-dot {
+        position: absolute;
+        left: -13px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+      }
+      .confidence-dot.green { background: #22c55e; }
+      .confidence-dot.amber { background: #f59e0b; }
+      .confidence-dot.red { background: #ef4444; }
+
+      .field-value-with-dot {
+        position: relative;
+      }
+
       input.inline-edit[readonly] {
         cursor: default;
         color: #80899a;
+      }
+
+      .scrub-context-modal {
+        position: fixed;
+        z-index: 9999;
+        background: #fff;
+        border: 1px solid var(--line-strong);
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+        padding: 14px 18px;
+        min-width: 220px;
+        max-width: 300px;
+        font-size: 12px;
+        color: #2a2f39;
+      }
+      .scrub-context-modal h4 {
+        margin: 0 0 10px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #1e2430;
+      }
+      .scrub-context-modal .ctx-field-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .scrub-context-modal .ctx-field-row:last-child {
+        border-bottom: none;
+      }
+      .scrub-context-modal .ctx-field-name {
+        font-weight: 500;
+        color: #5d6677;
+      }
+      .scrub-context-modal .ctx-field-val {
+        font-weight: 600;
+        color: #1e2430;
       }
 
       .orig-field .field-value {
@@ -2407,7 +2485,7 @@
                 <button class="action-btn compact btn-scrub" id="scrubBtn">Scrub</button>
               </div>
               <div class="submission-actions scrub-actions hidden" id="scrubActions">
-                <button class="action-btn compact btn-clearance" id="clearanceBtn">Clearance</button>
+                <button class="action-btn compact btn-clearance" id="clearanceBtn">Back to Ingestion</button>
                 <span class="scrub-insured-name" id="scrubInsuredName"></span>
               </div>
               <div class="zoom-tools">
@@ -5711,11 +5789,15 @@
 
       applyDensity();
       syncTrayState();
-      selectedSubmissionId = submissions[0].id;
-      leftPanelSubmissionId = submissions[0].id;
-      selectedSubmissionIds = new Set([submissions[0].id]);
-      selectedAttachment = "email";
       render();
+      const firstSorted = getSortedSubmissions()[0];
+      if (firstSorted) {
+        selectedSubmissionId = firstSorted.id;
+        leftPanelSubmissionId = firstSorted.id;
+        selectedSubmissionIds = new Set([firstSorted.id]);
+        selectedAttachment = "email";
+        render();
+      }
       window.addEventListener("DOMContentLoaded", render);
       window.addEventListener("load", render);
 
@@ -5780,12 +5862,6 @@
             numBuildings: "", numUnits: "",
             wallType: "", roofShape: ""
           };
-          submission.scrubData = {
-            buildings: [{ ...origB, orig: { ...origB } }]
-          };
-        }
-        const data = submission.scrubData;
-        if (scrubBuildingIndex >= data.buildings.length) {
           const emptyB = {
             address1: "", address2: "", city: "", state: "", zip: "",
             county: "", country: "",
@@ -5799,18 +5875,49 @@
             numBuildings: "", numUnits: "",
             wallType: "", roofShape: ""
           };
-          data.buildings.push({ ...emptyB, orig: { ...emptyB } });
+          submission.scrubData = {
+            buildings: [
+              { ...origB, orig: { ...origB } },
+              { ...emptyB, orig: { ...emptyB } },
+              { ...emptyB, orig: { ...emptyB } },
+              { ...emptyB, orig: { ...emptyB } },
+              { ...emptyB, orig: { ...emptyB } }
+            ]
+          };
+        }
+        const data = submission.scrubData;
+        if (scrubBuildingIndex >= data.buildings.length) {
+          scrubBuildingIndex = data.buildings.length - 1;
         }
         const b = data.buildings[scrubBuildingIndex];
         if (!b.orig) b.orig = {};
         const o = b.orig;
+        const confidence = {
+          address1: "green", address2: "green", city: "green", state: "green", zip: "green",
+          county: "green", country: "green",
+          building: "green", contents: "green", bi: "green", other: "green",
+          construction: "green", occupancy: "green",
+          stories: "red", yearBuilt: "green", sqft: "green",
+          wiringYear: "green", roofingYear: "green", plumbingYear: "green", heatingYear: "green",
+          roofType: "green",
+          fireAlarm: "green", fireAlarmType: "green",
+          sprinkler: "green", sprinklerType: "green",
+          numBuildings: "amber", numUnits: "green",
+          wallType: "green", roofShape: "green"
+        };
+        const dot = (key) => `<span class="confidence-dot ${confidence[key] || "green"}"></span>`;
         const ef = (label, value, key) => editableField(label, value, `scrub:${key}`);
         const rf = (label, value, ann) => scrubReadonlyField(label, value, ann);
-        const ep = (label, value, key) => editableField(label, value, `scrub:${key}`) + origField(label, o[key] || "");
+        const ep = (label, value, key) => `
+          <div>
+            <div class="field-label">${label}</div>
+            <div class="field-value-with-dot">${dot(key)}<div class="field-value"><input class="inline-edit" type="text" value="${(value || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:${key}" /></div></div>
+          </div>
+        ` + origField(label, o[key] || "");
         const epn = (label, value, key) => `
           <div>
             <div class="field-label">${label}</div>
-            <div class="field-value"><input class="inline-edit" type="text" value="${(value || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:${key}" /></div>
+            <div class="field-value-with-dot">${dot(key)}<div class="field-value"><input class="inline-edit" type="text" value="${(value || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:${key}" /></div></div>
             <div class="field-value orig-inline"><input class="inline-edit" type="text" value="${(o[key] || "").replace(/"/g, "&quot;")}" readonly tabindex="-1" /></div>
           </div>`;
         const rfn = (label, value, ann) => `
@@ -5821,9 +5928,9 @@
         const toggleNarrowOrig = (label, options, value, key) => `
           <div>
             <div class="field-label">${label}</div>
-            <div class="segmented-field" data-toggle-key="scrub:${key}">
+            <div class="field-value-with-dot">${dot(key)}<div class="segmented-field" data-toggle-key="scrub:${key}">
               ${options.map(opt => `<button type="button" data-value="${opt}" class="${value === opt ? "active" : ""}">${opt}</button>`).join("")}
-            </div>
+            </div></div>
             <div class="field-value orig-inline"><input class="inline-edit" type="text" value="${(o[key] || "").replace(/"/g, "&quot;")}" readonly tabindex="-1" /></div>
           </div>`;
 
@@ -5836,28 +5943,31 @@
             <div class="card-title">
               <h3>Building</h3>
               <div class="bldg-pills">
-                ${[1,2,3,4,5].map(n => `<button class="bldg-pill ${n - 1 === scrubBuildingIndex ? "active" : ""}" data-bldg="${n - 1}">Bldg ${n}</button>`).join("")}
+                ${data.buildings.map((_, i) => `<button class="bldg-pill ${i === scrubBuildingIndex ? "active" : ""}" data-bldg="${i}">Bldg ${i + 1}</button>`).join("")}
+                <div class="bldg-pills-separator"></div>
+                <button class="bldg-pill bldg-action destructive" id="deleteBldgBtn" type="button" ${data.buildings.length <= 1 ? 'disabled style="opacity:0.4;pointer-events:none;"' : ""}>Delete</button>
+                <button class="bldg-pill bldg-action" id="addBldgBtn" type="button">Add</button>
               </div>
             </div>
             <div class="scrub-two-col">
               <div class="scrub-field-grid">
                 <div>
                   <div class="field-label">Address 1 <button class="scrub-maps-btn" id="mapsBtn" type="button"><svg viewBox="0 0 16 16" width="12" height="12"><path d="M8 1.5a5.5 5.5 0 0 1 5.5 5.5c0 3.04-5.5 8.5-5.5 8.5S2.5 10.04 2.5 7A5.5 5.5 0 0 1 8 1.5Z" fill="#dc2626"/><circle cx="8" cy="7" r="2" fill="#fff"/></svg><span>Maps</span></button></div>
-                  <div class="field-value"><input class="inline-edit" type="text" value="${(b.address1 || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:address1" /></div>
+                  <div class="field-value-with-dot">${dot("address1")}<div class="field-value"><input class="inline-edit" type="text" value="${(b.address1 || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:address1" /></div></div>
                 </div>
                 ${origField("Address 1", o.address1)}
                 <div>
                   <div class="field-label">Address 2 <span class="scrub-rooftop-pill">Rooftop</span></div>
-                  <div class="field-value"><input class="inline-edit" type="text" value="${(b.address2 || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:address2" /></div>
+                  <div class="field-value-with-dot">${dot("address2")}<div class="field-value"><input class="inline-edit" type="text" value="${(b.address2 || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:address2" /></div></div>
                 </div>
                 ${origField("Address 2", o.address2)}
                 ${ep("City", b.city, "city")}
                 <div class="scrub-state-zip">
                   <div class="field-label">State</div>
                   <div class="scrub-state-zip-fields">
-                    <div class="field-value"><input class="inline-edit" type="text" value="${(b.state || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:state" /></div>
+                    <div class="field-value-with-dot">${dot("state")}<div class="field-value"><input class="inline-edit" type="text" value="${(b.state || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:state" /></div></div>
                     <span class="scrub-zip-label">Zip</span>
-                    <div class="scrub-zip"><div class="field-value"><input class="inline-edit" type="text" value="${(b.zip || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:zip" /></div></div>
+                    <div class="scrub-zip"><div class="field-value-with-dot">${dot("zip")}<div class="field-value"><input class="inline-edit" type="text" value="${(b.zip || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:zip" /></div></div></div>
                   </div>
                 </div>
                 <div class="scrub-state-zip orig-field">
@@ -5871,7 +5981,7 @@
                 ${rf("County", b.county, "Defaulted")}
                 <div>
                   <div class="field-label">Country</div>
-                  <div class="field-value" style="width:50px;margin-left:auto;"><input class="inline-edit" type="text" value="${(b.country || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:country" /></div>
+                  <div class="field-value-with-dot" style="width:60px;margin-left:auto;">${dot("country")}<div class="field-value"><input class="inline-edit" type="text" value="${(b.country || "").replace(/"/g, "&quot;")}" data-edit-key="scrub:country" /></div></div>
                 </div>
                 ${origField("Country", o.country)}
               </div>
@@ -5998,12 +6108,46 @@
         updateScrubTypeField("fireAlarm", "fireAlarmType");
         updateScrubTypeField("sprinkler", "sprinklerType");
 
-        scrubContent.querySelectorAll(".bldg-pill").forEach((pill) => {
+        scrubContent.querySelectorAll(".bldg-pill[data-bldg]").forEach((pill) => {
           pill.addEventListener("click", () => {
             scrubBuildingIndex = Number(pill.dataset.bldg);
             renderScrubContent(submission);
           });
         });
+
+        const deleteBldgBtn = document.getElementById("deleteBldgBtn");
+        if (deleteBldgBtn) {
+          deleteBldgBtn.addEventListener("click", () => {
+            if (data.buildings.length <= 1) return;
+            data.buildings.splice(scrubBuildingIndex, 1);
+            if (scrubBuildingIndex >= data.buildings.length) {
+              scrubBuildingIndex = data.buildings.length - 1;
+            }
+            renderScrubContent(submission);
+          });
+        }
+
+        const addBldgBtn = document.getElementById("addBldgBtn");
+        if (addBldgBtn) {
+          addBldgBtn.addEventListener("click", () => {
+            const emptyB = {
+              address1: "", address2: "", city: "", state: "", zip: "",
+              county: "", country: "",
+              building: "", contents: "", bi: "", other: "",
+              construction: "", occupancy: "",
+              stories: "", yearBuilt: "", sqft: "",
+              wiringYear: "", roofingYear: "", plumbingYear: "", heatingYear: "",
+              roofType: "",
+              fireAlarm: "", fireAlarmType: "",
+              sprinkler: "", sprinklerType: "",
+              numBuildings: "", numUnits: "",
+              wallType: "", roofShape: ""
+            };
+            data.buildings.push({ ...emptyB, orig: { ...emptyB } });
+            scrubBuildingIndex = data.buildings.length - 1;
+            renderScrubContent(submission);
+          });
+        }
 
         function getLastTabbableField() {
           const all = scrubContent.querySelectorAll('input.inline-edit:not([readonly]):not([tabindex="-1"]), .segmented-field[tabindex="0"]');
@@ -6011,17 +6155,18 @@
         }
 
         function advanceBuilding() {
-          setTimeout(() => {
-            if (scrubBuildingIndex < 4) {
-              scrubBuildingIndex++;
-            } else {
-              scrubBuildingIndex = 0;
-            }
-            renderScrubContent(submission);
-            scrubContent.scrollTop = 0;
-            const firstInput = scrubContent.querySelector('input.inline-edit:not([readonly]):not([tabindex="-1"])');
-            if (firstInput) firstInput.focus();
-          }, 0);
+          const currentIdx = scrubBuildingIndex;
+          if (currentIdx < data.buildings.length - 1) {
+            scrubBuildingIndex = currentIdx + 1;
+            setTimeout(() => {
+              renderScrubContent(submission);
+              scrubContent.scrollTop = 0;
+              const firstInput = scrubContent.querySelector('input.inline-edit:not([readonly]):not([tabindex="-1"])');
+              if (firstInput) firstInput.focus();
+            }, 0);
+          } else {
+            setTimeout(() => exitScrubMode(), 0);
+          }
         }
 
         function attachLastFieldHandler() {
@@ -6076,6 +6221,65 @@
         }
       }
 
+      if (scrubContent) {
+        scrubContent.addEventListener("contextmenu", (e) => {
+          const contextFields = new Set(["address1","address2","city","state","zip","county","country","construction","occupancy"]);
+          const input = e.target.closest(".inline-edit:not([readonly])");
+          if (!input) return;
+          const key = (input.dataset.editKey || "").replace("scrub:", "");
+          if (!contextFields.has(key)) return;
+          e.preventDefault();
+          const existing = document.getElementById("scrubContextModal");
+          if (existing) existing.remove();
+          const contextData = {
+            address1: [["Source","Broker Email"],["USPS Verified","Yes"],["Geocode Match","Exact"]],
+            address2: [["Source","Broker Email"],["Suite/Unit","Parsed"],["Validated","Yes"]],
+            city: [["Source","Broker Email"],["USPS Match","Confirmed"],["Metro Area","Columbus, OH"]],
+            state: [["Source","Broker Email"],["FIPS Code","39"],["Region","Midwest"]],
+            zip: [["Source","Broker Email"],["ZIP+4","43215-1234"],["Type","Standard"]],
+            county: [["Source","Geocode Lookup"],["FIPS","39049"],["Default Method","Centroid"]],
+            country: [["Source","Default"],["ISO Code","US"],["Validation","N/A"]],
+            construction: [["Source","ACORD Form"],["ISO Class","—"],["Confidence","Model v2.1"]],
+            occupancy: [["Source","ACORD Form"],["NAICS","—"],["SIC Code","—"]]
+          };
+          const rect = input.getBoundingClientRect();
+          const modal = document.createElement("div");
+          modal.className = "scrub-context-modal";
+          modal.id = "scrubContextModal";
+          const rows = contextData[key] || [];
+          modal.innerHTML = `
+            <h4>Additional fields used in determining the values</h4>
+            ${rows.map(([name, val]) => `
+              <div class="ctx-field-row">
+                <span class="ctx-field-name">${name}</span>
+                <span class="ctx-field-val">${val}</span>
+              </div>
+            `).join("")}
+          `;
+          document.body.appendChild(modal);
+          const modalW = modal.offsetWidth;
+          const modalH = modal.offsetHeight;
+          let left = rect.right + 8;
+          let top = rect.top;
+          if (left + modalW > window.innerWidth) left = rect.left - modalW - 8;
+          if (top + modalH > window.innerHeight) top = window.innerHeight - modalH - 8;
+          modal.style.left = left + "px";
+          modal.style.top = top + "px";
+        });
+        document.addEventListener("mousedown", (e) => {
+          if (!e.target.closest(".scrub-context-modal")) {
+            const m = document.getElementById("scrubContextModal");
+            if (m) m.remove();
+          }
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            const m = document.getElementById("scrubContextModal");
+            if (m) m.remove();
+          }
+        });
+      }
+
       const toolbarRight = document.getElementById("toolbarRight");
       const toolbarRightScrub = document.getElementById("toolbarRightScrub");
       const sectionTools = document.querySelector(".section-tools");
@@ -6127,10 +6331,27 @@
       if (mainCompleteBtn) {
         mainCompleteBtn.addEventListener("click", () => {
           if (!selectedSubmissionId) return;
+          const sorted = getSortedSubmissions();
+          const currentIndex = sorted.findIndex(s => s.id === selectedSubmissionId);
+          const completedId = selectedSubmissionId;
+
+          // Select the next row (or previous if at end)
+          const nextIndex = currentIndex < sorted.length - 1 ? currentIndex + 1 : currentIndex - 1;
+          if (nextIndex >= 0 && sorted[nextIndex]) {
+            selectedSubmissionId = sorted[nextIndex].id;
+            leftPanelSubmissionId = sorted[nextIndex].id;
+            selectedSubmissionIds = new Set([sorted[nextIndex].id]);
+            selectedAttachment = "email";
+          }
+
+          // Remove the completed submission
+          const removeIndex = submissions.findIndex(s => s.id === completedId);
+          if (removeIndex !== -1) submissions.splice(removeIndex, 1);
+
           inboxCount = Math.max(0, inboxCount - 1);
           completedCountVal++;
           updateNavCounts();
-          moveActiveSubmission(1);
+          render();
         });
       }
 
