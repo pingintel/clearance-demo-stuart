@@ -2,3 +2,10 @@ node_modules
 dist
 .DS_Store
 .vite
+
+# Agent telemetry (Pattern 6/7) — operational, never committed
+.campaign-loop.log
+.token-audit.log
+
+# npm lockfile not used — this repo installs with bun (see CLAUDE.md)
+package-lock.json
