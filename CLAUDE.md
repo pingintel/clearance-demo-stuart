@@ -29,31 +29,35 @@ restating the rules. For a demo this means: small, reversible, content-focused.
 prototype is validated by eye, not by Playwright). Green before any commit.
 
 ## Standing rules
-- Agent commits; Stuart pushes.
+- Agent commits; the operator pushes.
 - Never edit files or take filesystem actions unless explicitly asked.
 - Checkpoint HANDOFF.md before stopping; respawn over compact above ~70% context.
 
-<!-- DOCTRINE-POINTER v1 — generated from .framework/handoff-schema.md + manifest.yaml. Do not hand-edit; regenerate via sync-doctrine-pointer.sh. -->
-## Framework doctrine (canonical — read from `.framework/`, do not restate)
+<!-- DOCTRINE-POINTER v2 — generated from ~/Projects/ping-framework (7-doc core, manifest v2). Do not hand-edit; regenerate via sync-doctrine-pointer.sh. -->
+## Framework doctrine (canonical — read from the framework repo, do not restate)
 
-This project follows the unified Ping agentic framework. The canonical docs are vendored in this repo as a pinned submodule at `.framework/` and are the
-single source of truth — when this file and a `.framework/` doc disagree, the
-`.framework/` doc wins. Update the pin deliberately: `git submodule update --remote .framework`.
+This project follows the unified Ping agentic framework v2. The canonical docs live in
+`~/Projects/ping-framework/` and are the single source of truth — when this file and a
+framework doc disagree, the framework doc wins.
 
-- **Index:** `.framework/manifest.yaml`
-  declares the canonical set in precedence order. Read it to know which docs are in force.
-- **Before any multi-agent dispatch**, read `.framework/agent-topology.md` — the three
-  work shapes (coupled build / staged pipeline / independent fan-out), the judgment
-  checkpoints (where the seat switches up to the top model), and the worker tiers.
-- **For every handoff**, follow `.framework/handoff-schema.md` — the DISPATCH / HANDOFF /
-  LEDGER file roles, the `docs/handoffs/<campaign>-<YYYY-MM-DD-HHMM>-{DISPATCH,HANDOFF}.md`
-  naming, and the loop: `decide → DISPATCH → execute → HANDOFF → VERIFY → decide next`.
-  The execution session writes a HANDOFF with evidence (sha + gate counts, file:line), not
-  self-reports; the judgment session VERIFIES before advancing. Record gates as `presented`,
-  never `closed` — closing is Stuart's act.
-- **Read state first:** at task start, read the latest `docs/handoffs/*.md` for what's in
-  flight. **Write a handoff at the end** per the schema. A vague handoff breaks the loop.
+- **MANDATORY session load:** read `~/Projects/ping-framework/agent-runtime.md` before the
+  first tool call — levels, hard-rule core, capability preflight, gate, halt rules, and
+  operating-mode selection (Patch / Slice / Campaign). Its §10 table says what else to load
+  per task. `manifest.yaml` declares the full canonical set (7-doc core + companions).
+- **Before any build**, pick the mode per `build-modes.md` §1 — rule out Campaign hard
+  triggers first (data change, contract/API change, cross-repo, security boundary,
+  multi-agent, schema migration, irreversible operation), then the lightest mode that fits.
+- **Before any multi-agent dispatch**, read `agent-topology.md` (companion) — work shapes,
+  judgment checkpoints, worker tiers — and `handoff-protocol.md` for the DISPATCH / HANDOFF /
+  LEDGER protocol: `docs/handoffs/<campaign>-<YYYY-MM-DD-HHMM>-{DISPATCH,HANDOFF}.md` naming,
+  the loop `decide → DISPATCH → execute → HANDOFF → VERIFY → decide next`, and the unattended
+  run contract. Evidence over claims (sha + gate counts, file:line), never self-reports.
+  Record Slice/Campaign gates as `presented`, never `closed` — closing is the operator's act.
+- **Read state first:** at task start, read the campaign LEDGER
+  (`docs/handoffs/<campaign>-LEDGER.md`) plus the latest HANDOFF for the active campaign slug.
+  **Write a HANDOFF at the end** of every Slice or Campaign session, led by the ≤6-line
+  triage block (CHANGED / RISK / OWED / DECISIONS / NEXT). A vague handoff breaks the loop.
 
 The repo-specific CLAUDE.md content (stack, ports, paths, architecture) is below/above this
 block and is owned by the repo; this block is owned by the framework and regenerated.
-<!-- /DOCTRINE-POINTER v1 -->
+<!-- /DOCTRINE-POINTER v2 -->
