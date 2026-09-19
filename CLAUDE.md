@@ -8,8 +8,8 @@ unless a signed campaign says so (the iframe→React migration path is in
 `HANDOFF.md`, deliberately deferred).
 
 ## Framework
-The canonical engineering + agentic framework is pinned at `.framework/`
-(git submodule). Read it there. Apply its spirit: minimum-viable
+The canonical engineering + agentic framework is read LIVE from the framework repo —
+see the DOCTRINE-POINTER block below. Apply its spirit: minimum-viable
 over speculative abstraction, every change traceable to what was asked, no
 restating the rules. For a demo this means: small, reversible, content-focused.
 
