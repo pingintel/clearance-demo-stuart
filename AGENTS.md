@@ -2,8 +2,8 @@
 ## Framework doctrine (canonical — read from the framework repo, do not restate)
 
 This project follows the unified Ping agentic framework v2. The canonical docs live in
-`~/Projects/ping-framework/` and are the single source of truth — when this file and a
-framework doc disagree, the framework doc wins.
+`~/Projects/ping-framework/` (pinned version `3.0.0`, see its `VERSION` file) and are the
+single source of truth — when this file and a framework doc disagree, the framework doc wins.
 
 - **MANDATORY session load:** read `~/Projects/ping-framework/agent-runtime.md` before the
   first tool call — levels, hard-rule core, capability preflight, gate, halt rules, and
