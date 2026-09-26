@@ -7,11 +7,8 @@ product build — keep the iframe, polish content, do not rewrite into real Reac
 unless a signed campaign says so (the iframe→React migration path is in
 `HANDOFF.md`, deliberately deferred).
 
-## Framework
-The canonical engineering + agentic framework is read LIVE from the framework repo —
-see the DOCTRINE-POINTER block below. Apply its spirit: minimum-viable
-over speculative abstraction, every change traceable to what was asked, no
-restating the rules. For a demo this means: small, reversible, content-focused.
+## Scope
+This is a demo: keep changes small, reversible, and content-focused.
 
 ## Run discipline (LESSONS FROM 2026-06-13 — do not relearn these)
 - **Use bun, never npm.** npm under Node 25 silently under-installs this repo's
