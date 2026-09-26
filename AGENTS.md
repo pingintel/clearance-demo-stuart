@@ -1,34 +1,3 @@
-<!-- DOCTRINE-POINTER v2 — generated from ~/Projects/ping-framework (7-doc core, manifest v2). Do not hand-edit; regenerate via sync-doctrine-pointer.sh. -->
-## Framework doctrine (canonical — read from the framework repo, do not restate)
-
-This project follows the unified Ping agentic framework v2. The canonical docs live in
-`~/Projects/ping-framework/` (pinned version `3.0.0`, see its `VERSION` file) and are the
-single source of truth — when this file and a framework doc disagree, the framework doc wins.
-
-- **MANDATORY session load:** read `~/Projects/ping-framework/agent-runtime.md` before the
-  first tool call — levels, hard-rule core, capability preflight, gate, halt rules, and
-  operating-mode selection (Patch / Slice / Campaign). Its §10 table says what else to load
-  per task. `manifest.yaml` declares the full canonical set (7-doc core + companions).
-- **Before any build**, pick the mode per `build-modes.md` §1 — rule out Campaign hard
-  triggers first (data change, contract/API change, cross-repo, security boundary,
-  multi-agent, schema migration, irreversible operation), then the lightest mode that fits.
-- **Before any multi-agent dispatch**, read `agent-topology.md` (companion) — work shapes,
-  judgment checkpoints, worker tiers — and `handoff-protocol.md` for the DISPATCH / HANDOFF /
-  LEDGER protocol: `docs/handoffs/<campaign>-<YYYY-MM-DD-HHMM>-{DISPATCH,HANDOFF}.md` naming,
-  the loop `decide → DISPATCH → execute → HANDOFF → VERIFY → decide next`, and the unattended
-  run contract. Evidence over claims (sha + gate counts, file:line), never self-reports.
-  Record Slice/Campaign gates as `presented`, never `closed` — closing is the operator's act.
-- **Read state first:** at task start, read the campaign LEDGER
-  (`docs/handoffs/<campaign>-LEDGER.md`) plus the latest HANDOFF for the active campaign slug.
-  **Write a HANDOFF at the end** of every Slice or Campaign session, led by the ≤6-line
-  triage block (CHANGED / RISK / OWED / DECISIONS / NEXT). A vague handoff breaks the loop.
-
-The repo-specific CLAUDE.md content (stack, ports, paths, architecture) is below/above this
-block and is owned by the repo; this block is owned by the framework and regenerated.
-
-**Codex lane — how to load it:** there is no import syntax here. Open `~/Projects/ping-framework/agent-runtime.md` at that absolute path with your file-read tool before the first tool call, then follow its §10 table for whatever else this task needs.
-<!-- /DOCTRINE-POINTER v2 -->
-
 # clearance-demo — agent doctrine
 
 Standalone Vite/React **demo**: a thin shell that iframes a validated standalone
