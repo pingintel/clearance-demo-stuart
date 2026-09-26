@@ -26,6 +26,6 @@ This is a demo: keep changes small, reversible, and content-focused.
 prototype is validated by eye, not by Playwright). Green before any commit.
 
 ## Standing rules
-- Agent commits; Stuart pushes.
+- Agents commit on a branch and open a PR; the user merges.
 - Never edit files or take filesystem actions unless explicitly asked.
 - Checkpoint HANDOFF.md before stopping; respawn over compact above ~70% context.
