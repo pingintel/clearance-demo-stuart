@@ -1421,6 +1421,52 @@
         background: #fff;
       }
 
+      .map-view {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        height: 100%;
+      }
+
+      .map-panel {
+        flex: 1 1 0;
+        min-height: 180px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #dbe3ee;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .map-panel-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 5px 9px;
+        font-size: 10px;
+        color: #444b58;
+        background: #f6f8fc;
+        border-bottom: 1px solid #dbe3ee;
+      }
+
+      .map-canvas {
+        flex: 1 1 0;
+        min-height: 0;
+        position: relative;
+      }
+
+      .map-message {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 16px;
+        text-align: center;
+        font-size: 11px;
+        color: #5b6574;
+        background: #eef2f8;
+      }
+
       .download-btn {
         width: auto;
         height: auto;
@@ -5027,7 +5073,12 @@
         }
       ];
 
-      const attachmentOrder = ["email", "sov", "acord", "misc1", "misc2"];
+      // "map" is a view of the insured's location, not an attachment, so it has no entry in
+      // submission.attachments; attachmentLabel() supplies its name.
+      const attachmentOrder = ["map", "email", "sov", "acord", "misc1", "misc2"];
+      function attachmentLabel(submission, key) {
+        return key === "map" ? "Map" : submission.attachments[key];
+      }
       let selectedSubmissionId = "sub-102";
       let leftPanelSubmissionId = "sub-102";
       let selectedSubmissionIds = new Set(["sub-102"]);
@@ -5645,6 +5696,15 @@
       function renderDocTabs(submission) {
         if (!docTabs || !docSelect) return;
         const iconByKey = {
+          map: {
+            className: "map",
+            svg: `
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M8 1.6c-2.5 0-4.4 1.9-4.4 4.3 0 3.1 4.4 8.5 4.4 8.5s4.4-5.4 4.4-8.5c0-2.4-1.9-4.3-4.4-4.3Z" fill="#E8453C"/>
+                <circle cx="8" cy="5.9" r="1.7" fill="#fff"/>
+              </svg>
+            `
+          },
           email: {
             className: "email",
             svg: `
@@ -5704,7 +5764,7 @@
         docTabs.innerHTML = attachmentOrder.map((key) => `
           <button class="doc-tab ${key === selectedAttachment ? "active" : ""}" data-key="${key}">
             <span class="doc-glyph ${iconByKey[key].className}">${iconByKey[key].svg}</span>
-            <span>${submission.attachments[key]}</span>
+            <span>${attachmentLabel(submission, key)}</span>
           </button>
         `).join("");
 
@@ -5715,12 +5775,149 @@
         });
 
         docSelect.innerHTML = attachmentOrder.map((key) => `
-          <option value="${key}" ${key === selectedAttachment ? "selected" : ""}>${submission.attachments[key]}</option>
+          <option value="${key}" ${key === selectedAttachment ? "selected" : ""}>${attachmentLabel(submission, key)}</option>
         `).join("");
 
         docSelect.onchange = (event) => {
           setPreviewAttachment(event.target.value);
         };
+      }
+
+      // ---- Map pill: live Google Street View + satellite views of the submission's address ----
+      // The React shell supplies window.clearanceMapsConfig ({ apiKey, mapId }) from the same
+      // VITE_GOOGLE_MAPS_* env vars Ping Radar uses; the Maps script loads on first use.
+      let googleMapsPromise = null;
+      const geocodeCache = new Map();
+
+      function loadGoogleMaps() {
+        if (window.google?.maps?.Map) return Promise.resolve();
+        if (googleMapsPromise) return googleMapsPromise;
+        const config = window.clearanceMapsConfig;
+        if (!config?.apiKey) return Promise.reject(new Error("Map unavailable: configure VITE_GOOGLE_MAPS_API_KEY."));
+        googleMapsPromise = new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(config.apiKey)}&libraries=marker,geometry&v=weekly`;
+          script.async = true;
+          script.onload = () => resolve();
+          script.onerror = () => {
+            googleMapsPromise = null;
+            reject(new Error("Failed to load Google Maps. Check VITE_GOOGLE_MAPS_API_KEY."));
+          };
+          document.head.appendChild(script);
+        });
+        return googleMapsPromise;
+      }
+
+      function submissionAddress(submission) {
+        const d = submission.insuredDetails;
+        return [d.address1, d.city, [d.state, d.zip].filter(Boolean).join(" ")].filter(Boolean).join(", ");
+      }
+
+      function geocodeAddress(address) {
+        if (!geocodeCache.has(address)) {
+          const lookup = new google.maps.Geocoder()
+            .geocode({ address })
+            .then((response) => response.results[0].geometry.location.toJSON());
+          lookup.catch(() => geocodeCache.delete(address));
+          geocodeCache.set(address, lookup);
+        }
+        return geocodeCache.get(address);
+      }
+
+      function renderMapView(submission) {
+        const address = submissionAddress(submission);
+        return `
+          <div class="map-view">
+            <div class="map-panel">
+              <div class="map-panel-head"><strong>Street View</strong><span>${address}</span></div>
+              <div class="map-canvas" id="mapStreetView"><div class="map-message">Loading Street View…</div></div>
+            </div>
+            <div class="map-panel">
+              <div class="map-panel-head"><strong>Satellite</strong><span>${address}</span></div>
+              <div class="map-canvas" id="mapSatellite"><div class="map-message">Loading satellite view…</div></div>
+            </div>
+          </div>
+        `;
+      }
+
+      function showMapMessage(canvas, message) {
+        const note = document.createElement("div");
+        note.className = "map-message";
+        note.textContent = message;
+        canvas.replaceChildren(note);
+      }
+
+      async function mountMapView(submission) {
+        const streetCanvas = document.getElementById("mapStreetView");
+        const satelliteCanvas = document.getElementById("mapSatellite");
+        if (!streetCanvas || !satelliteCanvas) return;
+        // The tab or submission can change while Google loads or geocodes; stop if this view was replaced.
+        const replaced = () => !streetCanvas.isConnected;
+        const failBoth = (message) => {
+          showMapMessage(streetCanvas, message);
+          showMapMessage(satelliteCanvas, message);
+        };
+
+        try {
+          await loadGoogleMaps();
+        } catch (error) {
+          if (!replaced()) failBoth(error.message);
+          return;
+        }
+        if (replaced()) return;
+
+        const address = submissionAddress(submission);
+        let position;
+        try {
+          position = await geocodeAddress(address);
+        } catch {
+          if (!replaced()) failBoth(`Couldn't locate ${address || "this submission's address"} on the map.`);
+          return;
+        }
+        if (replaced()) return;
+
+        const mapId = window.clearanceMapsConfig.mapId;
+        satelliteCanvas.replaceChildren();
+
+        const satellite = new google.maps.Map(satelliteCanvas, {
+          center: position,
+          zoom: 19,
+          mapTypeId: "satellite",
+          ...(mapId ? { mapId } : {}),
+          clickableIcons: false,
+          zoomControl: true,
+          mapTypeControl: true,
+          mapTypeControlOptions: { style: google.maps.MapTypeControlStyle.DROPDOWN_MENU },
+          streetViewControl: true,
+          fullscreenControl: true,
+          gestureHandling: "greedy"
+        });
+        if (mapId) {
+          new google.maps.marker.AdvancedMarkerElement({ map: satellite, position });
+        } else {
+          new google.maps.Marker({ map: satellite, position });
+        }
+
+        try {
+          const { data } = await new google.maps.StreetViewService().getPanorama({
+            location: position,
+            radius: 75,
+            source: google.maps.StreetViewSource.OUTDOOR
+          });
+          if (replaced()) return;
+          streetCanvas.replaceChildren();
+          const heading = google.maps.geometry.spherical.computeHeading(data.location.latLng, position);
+          const panorama = new google.maps.StreetViewPanorama(streetCanvas, {
+            pano: data.location.pano,
+            pov: { heading, pitch: 0 },
+            addressControl: true,
+            fullscreenControl: true
+          });
+          // Dropping the satellite map's pegman opens Street View in the Street View panel.
+          satellite.setStreetView(panorama);
+        } catch {
+          if (!replaced()) showMapMessage(streetCanvas, "No Street View imagery is available at this address.");
+        }
       }
 
       function renderAcord(submission) {
@@ -5825,6 +6022,7 @@
       }
 
       function renderPreview(submission) {
+        if (selectedAttachment === "map") return renderMapView(submission);
         if (selectedAttachment === "email") return renderEmail(submission);
         if (selectedAttachment === "acord") return renderAcord(submission);
         if (selectedAttachment === "sov") return renderSov(submission, submission.attachments.sov);
@@ -6126,8 +6324,9 @@
           return;
         }
         renderDocTabs(submission);
-        previewTitle.textContent = submission.attachments[selectedAttachment];
+        previewTitle.textContent = attachmentLabel(submission, selectedAttachment);
         previewArea.innerHTML = renderPreview(submission);
+        if (selectedAttachment === "map") mountMapView(submission);
       }
 
       function render() {
