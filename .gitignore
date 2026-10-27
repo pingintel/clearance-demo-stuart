@@ -9,3 +9,6 @@ dist
 
 # npm lockfile not used — this repo installs with bun (see CLAUDE.md)
 package-lock.json
+
+# Local env (Google Maps key from Ping Radar) — never committed
+.env.local
