@@ -91,9 +91,19 @@
       }
 
       .tray.closed {
-        width: 0;
-        opacity: 0;
-        border-right-color: transparent;
+        width: 36px;
+      }
+
+      .tray.closed .tray-header,
+      .tray.closed .tray-nav-item,
+      .tray.closed .tray-nav-label,
+      .tray.closed .tray-nav-section + .tray-nav-section {
+        display: none;
+      }
+
+      .tray.closed .tray-nav-heading {
+        justify-content: center;
+        padding: 6px 0;
       }
 
       .tray-header {
@@ -161,6 +171,16 @@
       .tray-nav-chevron {
         font-size: 14px;
         color: #8a93a3;
+      }
+
+      button.tray-nav-chevron {
+        padding: 0 6px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      button.tray-nav-chevron:hover {
+        background: #f1f5f9;
       }
 
       .tray-nav-item {
@@ -2953,7 +2973,7 @@
         <div class="tray-body" id="trayBody">
           <nav class="tray-nav">
             <div class="tray-nav-section">
-              <div class="tray-nav-heading">Submissions <span class="tray-nav-chevron">‹</span></div>
+              <div class="tray-nav-heading"><span class="tray-nav-label">Submissions</span> <button type="button" class="icon-btn tray-nav-chevron" id="trayNavChevron" aria-label="Toggle navigation panel">‹</button></div>
               <div class="tray-nav-item active">Inbox <span class="tray-nav-badge" id="inboxCount">30</span></div>
               <div class="tray-nav-item">Assigned <span class="tray-nav-badge">18</span></div>
               <div class="tray-nav-item">In Progress <span class="tray-nav-badge">4</span></div>
@@ -6144,6 +6164,7 @@
       const trayBody = document.getElementById("trayBody");
       const headerBrand = document.getElementById("headerBrand");
       const edgeToggle = document.getElementById("edgeToggle");
+      const trayNavChevron = document.getElementById("trayNavChevron");
 
       const resizeBar = document.querySelector(".resize-bar");
 
@@ -6153,19 +6174,24 @@
       }
 
       function syncTrayState() {
-        if (!tray || !headerBrand || !edgeToggle) return;
+        if (!tray || !headerBrand || !edgeToggle || !trayNavChevron) return;
         const closed = tray.classList.contains("closed");
         headerBrand.classList.toggle("hidden", !closed);
         edgeToggle.classList.add("visible");
         edgeToggle.textContent = closed ? "›" : "‹";
+        trayNavChevron.textContent = closed ? "›" : "‹";
         positionEdgeToggle();
       }
 
-      if (edgeToggle && tray) {
-        edgeToggle.addEventListener("click", () => {
-          tray.classList.toggle("closed");
-          syncTrayState();
-        });
+      // The edge handle and the chevron beside "Submissions" both toggle the tray;
+      // a closed tray collapses to a rail that keeps only the chevron.
+      if (tray) {
+        for (const toggle of [edgeToggle, trayNavChevron]) {
+          toggle?.addEventListener("click", () => {
+            tray.classList.toggle("closed");
+            syncTrayState();
+          });
+        }
       }
 
       window.addEventListener("resize", positionEdgeToggle);
