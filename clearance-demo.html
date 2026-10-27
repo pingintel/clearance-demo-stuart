@@ -91,9 +91,19 @@
       }
 
       .tray.closed {
-        width: 0;
-        opacity: 0;
-        border-right-color: transparent;
+        width: 36px;
+      }
+
+      .tray.closed .tray-header,
+      .tray.closed .tray-nav-item,
+      .tray.closed .tray-nav-label,
+      .tray.closed .tray-nav-section + .tray-nav-section {
+        display: none;
+      }
+
+      .tray.closed .tray-nav-heading {
+        justify-content: center;
+        padding: 6px 0;
       }
 
       .tray-header {
@@ -2963,7 +2973,7 @@
         <div class="tray-body" id="trayBody">
           <nav class="tray-nav">
             <div class="tray-nav-section">
-              <div class="tray-nav-heading">Submissions <button type="button" class="icon-btn tray-nav-chevron" id="trayNavChevron" aria-label="Toggle navigation panel">‹</button></div>
+              <div class="tray-nav-heading"><span class="tray-nav-label">Submissions</span> <button type="button" class="icon-btn tray-nav-chevron" id="trayNavChevron" aria-label="Toggle navigation panel">‹</button></div>
               <div class="tray-nav-item active">Inbox <span class="tray-nav-badge" id="inboxCount">30</span></div>
               <div class="tray-nav-item">Assigned <span class="tray-nav-badge">18</span></div>
               <div class="tray-nav-item">In Progress <span class="tray-nav-badge">4</span></div>
@@ -6164,16 +6174,17 @@
       }
 
       function syncTrayState() {
-        if (!tray || !headerBrand || !edgeToggle) return;
+        if (!tray || !headerBrand || !edgeToggle || !trayNavChevron) return;
         const closed = tray.classList.contains("closed");
         headerBrand.classList.toggle("hidden", !closed);
         edgeToggle.classList.add("visible");
         edgeToggle.textContent = closed ? "›" : "‹";
+        trayNavChevron.textContent = closed ? "›" : "‹";
         positionEdgeToggle();
       }
 
       // The edge handle and the chevron beside "Submissions" both toggle the tray;
-      // the chevron sits inside the tray, so the edge handle is what reopens it.
+      // a closed tray collapses to a rail that keeps only the chevron.
       if (tray) {
         for (const toggle of [edgeToggle, trayNavChevron]) {
           toggle?.addEventListener("click", () => {
