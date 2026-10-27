@@ -163,6 +163,16 @@
         color: #8a93a3;
       }
 
+      button.tray-nav-chevron {
+        padding: 0 6px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      button.tray-nav-chevron:hover {
+        background: #f1f5f9;
+      }
+
       .tray-nav-item {
         font-size: 14px;
         color: #2a2f39;
@@ -2953,7 +2963,7 @@
         <div class="tray-body" id="trayBody">
           <nav class="tray-nav">
             <div class="tray-nav-section">
-              <div class="tray-nav-heading">Submissions <span class="tray-nav-chevron">‹</span></div>
+              <div class="tray-nav-heading">Submissions <button type="button" class="icon-btn tray-nav-chevron" id="trayNavChevron" aria-label="Toggle navigation panel">‹</button></div>
               <div class="tray-nav-item active">Inbox <span class="tray-nav-badge" id="inboxCount">30</span></div>
               <div class="tray-nav-item">Assigned <span class="tray-nav-badge">18</span></div>
               <div class="tray-nav-item">In Progress <span class="tray-nav-badge">4</span></div>
@@ -6144,6 +6154,7 @@
       const trayBody = document.getElementById("trayBody");
       const headerBrand = document.getElementById("headerBrand");
       const edgeToggle = document.getElementById("edgeToggle");
+      const trayNavChevron = document.getElementById("trayNavChevron");
 
       const resizeBar = document.querySelector(".resize-bar");
 
@@ -6161,11 +6172,15 @@
         positionEdgeToggle();
       }
 
-      if (edgeToggle && tray) {
-        edgeToggle.addEventListener("click", () => {
-          tray.classList.toggle("closed");
-          syncTrayState();
-        });
+      // The edge handle and the chevron beside "Submissions" both toggle the tray;
+      // the chevron sits inside the tray, so the edge handle is what reopens it.
+      if (tray) {
+        for (const toggle of [edgeToggle, trayNavChevron]) {
+          toggle?.addEventListener("click", () => {
+            tray.classList.toggle("closed");
+            syncTrayState();
+          });
+        }
       }
 
       window.addEventListener("resize", positionEdgeToggle);
