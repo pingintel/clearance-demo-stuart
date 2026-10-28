@@ -2542,6 +2542,22 @@
         align-items: center;
       }
 
+      .policy-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+      }
+
+      .policy-controls .segmented-field {
+        width: auto;
+        flex: none;
+      }
+
+      .policy-controls .field-value {
+        flex: 1;
+      }
+
       .bldg-pills-separator {
         width: 1px;
         height: 16px;
@@ -6646,6 +6662,66 @@
       }
 
       let scrubBuildingIndex = 0;
+      // Which panel the scrub card view shows: "building" or "policy" (Policy Terms).
+      // Distinct from scrubViewMode, which is card vs grid.
+      let scrubPanel = "building";
+
+      const POLICY_DEDUCTIBLES = [
+        ["aop", "AOP"], ["wind", "Wind"], ["hail", "Hail"], ["flood", "Flood"],
+        ["wildfire", "Wildfire"], ["eq", "EQ"], ["scs", "SCS"]
+      ];
+
+      // Policy terms live on the submission (not per building) and are created on first use.
+      function ensurePolicyTerms(submission) {
+        const data = submission.scrubData;
+        if (!data.policyTerms) {
+          data.policyTerms = {};
+          POLICY_DEDUCTIBLES.forEach(([key]) => {
+            data.policyTerms[key] = { included: key === "aop", basis: "$", amount: "", pct: 1 };
+          });
+        }
+        return data.policyTerms;
+      }
+
+      function policyToggle(key, field, options, active) {
+        return `<div class="segmented-field" data-policy-key="${key}:${field}">
+          ${options.map(([value, text]) => `<button type="button" data-value="${value}" class="${String(active) === value ? "active" : ""}">${text}</button>`).join("")}
+        </div>`;
+      }
+
+      function renderDeductibleRow([key, label], t) {
+        const controls = [policyToggle(key, "included", [["Included", "Included"], ["Excluded", "Excluded"]], t.included ? "Included" : "Excluded")];
+        if (t.included) {
+          controls.push(policyToggle(key, "basis", [["$", "$"], ["%", "%"]], t.basis));
+          controls.push(t.basis === "$"
+            ? `<div class="field-value"><input class="inline-edit" type="text" placeholder="Amount" value="${(t.amount || "").replace(/"/g, "&quot;")}" data-policy-key="${key}:amount" /></div>`
+            : policyToggle(key, "pct", [1, 2, 3, 4, 5].map(n => [String(n), `${n}%`]), t.pct));
+        }
+        return `<div><div class="field-label">${label}</div><div class="policy-controls">${controls.join("")}</div></div>`;
+      }
+
+      function renderPolicyTermsCard(terms) {
+        return `
+          <div class="card detail-card">
+            <div class="card-title"><h3>Deductibles</h3></div>
+            <div class="scrub-field-grid">
+              ${POLICY_DEDUCTIBLES.map(d => renderDeductibleRow(d, terms[d[0]])).join("")}
+            </div>
+          </div>`;
+      }
+
+      // Writes one policy control ("wind:included", "wind:pct", ...) to the submission.
+      // Returns true when the change affects which controls are shown, so the caller re-renders.
+      function setPolicyTerm(submission, policyKey, value) {
+        const [perilKey, field] = policyKey.split(":");
+        const t = ensurePolicyTerms(submission)[perilKey];
+        if (!t) return false;
+        if (field === "included") t.included = value === "Included";
+        else if (field === "basis") t.basis = value;
+        else if (field === "pct") t.pct = Number(value);
+        else if (field === "amount") t.amount = value;
+        return field !== "amount";
+      }
 
       function renderScrubContent(submission) {
         if (!scrubContent || !submission) return;
@@ -6747,15 +6823,19 @@
           </div>
           <div class="card detail-card" style="padding-bottom:0;">
             <div class="card-title">
-              <h3>Building</h3>
               <div class="bldg-pills">
+                <button class="bldg-pill ${scrubPanel === "building" ? "active" : ""}" data-panel="building" type="button">Building</button>
+                <button class="bldg-pill ${scrubPanel === "policy" ? "active" : ""}" data-panel="policy" type="button">Policy Terms</button>
+              </div>
+              ${scrubPanel === "building" ? `<div class="bldg-pills">
                 ${data.buildings.map((_, i) => `<button class="bldg-pill ${i === scrubBuildingIndex ? "active" : ""}" data-bldg="${i}">Bldg ${i + 1}</button>`).join("")}
                 <div class="bldg-pills-separator"></div>
                 <button class="bldg-pill bldg-action destructive" id="deleteBldgBtn" type="button" ${data.buildings.length <= 1 ? 'disabled style="opacity:0.4;pointer-events:none;"' : ""}>Delete</button>
                 <button class="bldg-pill bldg-action" id="addBldgBtn" type="button">Add</button>
-              </div>
+              </div>` : ""}
             </div>
           </div>
+          ${scrubPanel === "policy" ? renderPolicyTermsCard(ensurePolicyTerms(submission)) : `
           <div class="scrub-two-col">
             <div class="card detail-card">
               <div class="scrub-field-grid">
@@ -6851,6 +6931,7 @@
               </div>
             </div>
           </div>
+          `}
           </div>
           <div id="scrubGridView" class="scrub-grid-view hidden">
             <!-- Excel Ribbon -->
@@ -7845,7 +7926,7 @@
           if (field === "sprinkler") updateScrubTypeField("sprinkler", "sprinklerType");
         }
 
-        scrubContent.querySelectorAll(".segmented-field").forEach((toggle) => {
+        scrubContent.querySelectorAll(".segmented-field:not([data-policy-key])").forEach((toggle) => {
           toggle.setAttribute("tabindex", "0");
           toggle.querySelectorAll("button").forEach((btn) => {
             btn.setAttribute("tabindex", "-1");
@@ -7867,6 +7948,30 @@
 
         updateScrubTypeField("fireAlarm", "fireAlarmType");
         updateScrubTypeField("sprinkler", "sprinklerType");
+
+        scrubContent.querySelectorAll(".bldg-pill[data-panel]").forEach((pill) => {
+          pill.addEventListener("click", () => {
+            scrubPanel = pill.dataset.panel;
+            renderScrubContent(submission);
+          });
+        });
+
+        // Policy Terms controls write to submission.scrubData.policyTerms, never to the current building.
+        scrubContent.querySelectorAll("[data-policy-key]").forEach((el) => {
+          const policyKey = el.dataset.policyKey;
+          if (el.matches("input")) {
+            el.addEventListener("input", () => setPolicyTerm(submission, policyKey, el.value));
+            el.addEventListener("keydown", (event) => {
+              if (event.key === "Enter") { event.preventDefault(); el.blur(); }
+            });
+            return;
+          }
+          el.querySelectorAll("button").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              if (setPolicyTerm(submission, policyKey, btn.dataset.value)) renderScrubContent(submission);
+            });
+          });
+        });
 
         scrubContent.querySelectorAll(".bldg-pill[data-bldg]").forEach((pill) => {
           pill.addEventListener("click", () => {
@@ -7918,6 +8023,7 @@
           const currentIdx = scrubBuildingIndex;
           if (currentIdx < data.buildings.length - 1) {
             scrubBuildingIndex = currentIdx + 1;
+            scrubPanel = "building";
             setTimeout(() => {
               renderScrubContent(submission);
               scrubContent.scrollTop = 0;
@@ -8103,6 +8209,7 @@
         if (toolbarRightScrub) toolbarRightScrub.classList.remove("hidden");
         if (sectionTools) sectionTools.classList.add("hidden");
         scrubBuildingIndex = 0;
+        scrubPanel = "building";
         scrubViewMode = "card";
         const submission = getSelectedSubmission() || submissions[0];
         if (topbarScrubInsured && submission) topbarScrubInsured.textContent = submission.insured;
